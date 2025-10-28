@@ -1,0 +1,34 @@
+services:
+  restfull-rabbitmq:
+    ports: []
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  restfull-mongodb:
+    ports: []
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  restfull-app:
+    build:
+      context: ..
+      dockerfile: docker/backend/Dockerfile
+    container_name: restfull-app
+    env_file:
+      - .env.staging
+    environment:
+      MONGO_URI: mongodb://restfull-mongodb:27017/school
+      RABBITMQ_URI: amqp://user:password@restfull-rabbitmq:5672
+    depends_on:
+      - restfull-rabbitmq
+      - restfull-mongodb
+    ports:
+      - '3000:3000'
+    networks:
+      - backend
