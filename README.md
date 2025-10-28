@@ -1,98 +1,155 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Car Lease Management System
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project implements a **car lease management platform** designed to handle clients, vehicles, and rental contracts within an automotive leasing company. It is built using **NestJS** and structured according to the **Hexagonal Architecture (Ports and Adapters pattern)** to ensure modularity, testability, and long-term maintainability.
 
-## Description
+The project was developed as part of a **software architecture course** assignment focused on designing robust, domain-driven backend systems.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Functional Specifications
 
-```bash
-$ pnpm install
+### Core Entities
+
+#### 1. Client
+
+Represents a physical person who can rent vehicles.
+Attributes include:
+
+* First name
+* Last name
+* Date of birth
+* Driver’s license number
+* Address
+
+**Business Rules:**
+
+* A client is unique based on full name and date of birth.
+* No two clients can share the same driver’s license number.
+
+#### 2. Vehicle
+
+Represents a rentable asset within the company’s fleet.
+Attributes include:
+
+* Brand
+* Model
+* Engine type
+* Color
+* License plate number
+* Acquisition date
+* Status (available, rented, broken)
+
+**Business Rules:**
+
+* A vehicle must be unique based on its license plate.
+* Vehicles marked as *broken* cannot be rented.
+
+#### 3. Contract
+
+Represents a lease agreement linking a client and a vehicle.
+Attributes include:
+
+* Unique identifier
+* Start date
+* End date
+* Status (pending, active, completed, late, cancelled)
+
+**Business Rules:**
+
+* A vehicle can only be rented by one client at a time.
+* A client can rent multiple vehicles simultaneously.
+* If a vehicle becomes broken, all pending contracts related to it must be automatically cancelled.
+* If a client does not return the vehicle on time, the contract becomes *late*.
+* If a late return prevents a subsequent rental, the next contract must be automatically *cancelled*.
+
+---
+
+## Technical Architecture
+
+### Design Pattern
+
+The system follows the **Hexagonal Architecture** (also known as Ports and Adapters).
+This approach separates:
+
+* **Domain layer** – core business logic and rules.
+* **Application layer** – use cases and service orchestration.
+* **Infrastructure layer** – persistence, API, and external adapters.
+
+This ensures that the domain logic remains independent from technical frameworks and infrastructure details.
+
+### Tech Stack
+
+* **Backend Framework:** NestJS
+* **Language:** TypeScript
+* **Database:** MongoDB
+* **ORM:** Mongoose
+* **Messaging:** RabbitMQ
+* **Testing:** Jest
+* **Containerization:** Docker
+
+---
+
+## Repository Structure
+
+```
+software-architecture-car-lease-project/
+├── src/
+│   ├── domain/           # Entities, value objects, use cases, domain services
+│   ├── application/      # Input/output
+│   ├── infrastructure/   # Repositories, database, controllers
+│   └── main.ts           # Application entry point
+├── test/                 # Unit and integration tests
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
-## Compile and run the project
+---
+
+## Business Scenarios
+
+1. **Register a client**
+   Validate uniqueness by name, birth date, and license number.
+
+2. **Add a vehicle**
+   Ensure uniqueness by license plate.
+
+3. **Create a rental contract**
+   Ensure vehicle availability and client eligibility.
+
+4. **Update vehicle status to “broken”**
+   Automatically cancel pending contracts for that vehicle.
+
+5. **Detect late returns**
+   Mark ongoing contracts as *late* when the end date is exceeded.
+   Cancel any blocked pending contracts.
+
+---
+
+## Setup Instructions
 
 ```bash
-# development
-$ pnpm run start
+# Clone repository
+git clone https://github.com/cedric-champeix/software-architecture-car-lease-project.git
 
-# watch mode
-$ pnpm run start:dev
+# Navigate into project directory
+cd software-architecture-car-lease-project
 
-# production mode
-$ pnpm run start:prod
+# Install dependencies
+pnpm install
+
+# Run development server
+pnpm dev
+
+# Run tests
+pnpm test
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ pnpm run test
+## Author
 
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Cédric Champeix
+Felix Delassus
