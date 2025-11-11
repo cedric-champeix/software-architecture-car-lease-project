@@ -33,6 +33,11 @@ import { ContractModule } from '../contract/contract.module';
     },
   ],
   exports: [
+    CreateVehicleUseCase,
+    FindAllVehiclesUseCase,
+    FindVehicleUseCase,
+    UpdateVehicleUseCase,
+    DeleteVehicleUseCase,
     {
       provide: 'VehicleRepository',
       useClass: VehicleMongooseRepository,

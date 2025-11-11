@@ -31,6 +31,11 @@ import {
     },
   ],
   exports: [
+    CreateClientUseCase,
+    FindClientUseCase,
+    FindAllClientsUseCase,
+    UpdateClientUseCase,
+    DeleteClientUseCase,
     {
       provide: 'ClientRepository',
       useClass: ClientMongooseRepository,

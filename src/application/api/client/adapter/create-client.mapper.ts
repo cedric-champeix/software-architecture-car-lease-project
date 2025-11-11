@@ -7,6 +7,9 @@ export class CreateClientDtoMapper {
       firstName: dto.firstName,
       lastName: dto.lastName,
       email: dto.email,
+      birthDate: dto.birthDate,
+      driverLicenseNumber: dto.driverLicenseNumber,
+      address: dto.address,
     };
   }
 }

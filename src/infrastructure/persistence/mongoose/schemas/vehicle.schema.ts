@@ -1,14 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
 import { FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
 
 @Schema({ timestamps: true, collection: 'vehicles' })
-export class VehicleModel extends Document {
+export class VehicleModel {
   @Prop({ required: true })
   make: string;
 
   @Prop({ required: true })
-  modele: string;
+  model: string;
 
   @Prop({ required: true, type: String, enum: FuelType })
   fuelType: FuelType;

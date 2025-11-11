@@ -39,8 +39,9 @@ describe('ClientController (e2e)', () => {
         firstName: 'John',
         lastName: 'Doe',
         birthDate: '1990-01-01',
-        driverLicenseNumber: '12345',
+        driverLicenseNumber: '54321-post',
         address: '123 Main St',
+        email: 'john.doe@example.com',
       })
       .expect(201);
   });
@@ -50,10 +51,9 @@ describe('ClientController (e2e)', () => {
       firstName: 'John',
       lastName: 'Doe',
       birthDate: new Date('1990-01-01'),
-      driverLicenseNumber: '12345',
+      driverLicenseNumber: '12345-get',
       address: '123 Main St',
     });
-
     return request(app.getHttpServer())
       .get('/clients')
       .expect(200)

@@ -33,7 +33,7 @@ export class ClientMongooseRepository implements ClientRepository {
     return this.toDomain(created);
   }
 
-  async findById({ id }: FindClientByIdInput): Promise<Client | null> {
+  async findById(id: string): Promise<Client | null> {
     const doc = await this.model.findById(id);
     return doc ? this.toDomain(doc) : null;
   }

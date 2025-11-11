@@ -9,6 +9,6 @@ export class FindClientUseCase {
   constructor(private readonly repository: ClientRepository) {}
 
   async execute({ id }: FindClientUseCaseInput): Promise<Client | null> {
-    return this.repository.findById({ id });
+    return this.repository.findById(id);
   }
 }

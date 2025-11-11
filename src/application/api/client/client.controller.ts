@@ -17,10 +17,11 @@ import { FindClientUseCase } from 'src/domain/use-cases/client/find-client.use-c
 import { UpdateClientUseCase } from 'src/domain/use-cases/client/update-client.use-case';
 
 import { CreateClientDtoMapper } from './adapter/create-client.mapper';
+import { UpdateClientDtoMapper } from './adapter/update-client.mapper';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
-@Controller('api/v1/clients')
+@Controller('clients')
 export class ClientController {
   constructor(
     private readonly findClientUseCase: FindClientUseCase,
@@ -37,7 +38,7 @@ export class ClientController {
       CreateClientDtoMapper.toUseCaseInput(createClientDto),
     );
 
-    return { message: 'Client created', data: client };
+    return client;
   }
 
   @Get()
@@ -45,7 +46,7 @@ export class ClientController {
   async findAll() {
     const clients = await this.findAllClientsUseCase.execute();
 
-    return { data: clients };
+    return clients;
   }
 
   @Get(':id')
@@ -55,7 +56,7 @@ export class ClientController {
 
     if (!client) throw new NotFoundException('Client not found');
 
-    return { data: client };
+    return client;
   }
 
   @Patch(':id')
@@ -71,13 +72,13 @@ export class ClientController {
 
     if (!client) throw new NotFoundException('Client not found');
 
-    return { message: 'Client updated', data: client };
+    return client;
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: number) {
-    const result = this.clientService.remove(id);
+  async remove(@Param('id') id: string) {
+    const result = await this.deleteClientUseCase.execute({ id });
 
     if (!result) throw new NotFoundException('Client not found');
   }

@@ -52,24 +52,29 @@ describe('ContractController (e2e)', () => {
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345',
       address: '123 Main St',
+      email: 'john.doe.contract@example.com',
     });
 
     const vehicle = await vehicleModel.create({
       make: 'Toyota',
       model: 'Corolla',
       fuelType: FuelType.PETROL,
-      color: 'blue',
-      licensePlate: 'ABC-123',
+      vehicleStatus: VehicleStatus.AVAILABLE,
+      licensePlate: 'AB-123-CD',
+      vin: '123456789',
+      year: 2020,
+      mileage: 10000,
+      dailyRate: 50,
+      color: 'Black',
       acquiredDate: new Date(),
-      status: VehicleStatus.AVAILABLE,
     });
 
     return request(app.getHttpServer())
       .post('/contracts')
       .send({
-        clientId: client.id.toString(),
-        vehicleId: vehicle.id.toString(),
-        startDate: '2025-12-01',
+        clientId: client.id,
+        vehicleId: vehicle.id,
+        startDate: '2025-11-10',
         endDate: '2025-12-10',
       })
       .expect(201);

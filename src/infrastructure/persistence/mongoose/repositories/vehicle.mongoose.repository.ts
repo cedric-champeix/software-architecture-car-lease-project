@@ -12,11 +12,11 @@ export class VehicleMongooseRepository implements VehicleRepository {
     private readonly vehicleModel: Model<VehicleModel>,
   ) {}
 
-  private toDomain(vehicleModel: VehicleModel): Vehicle {
+  private toDomain(vehicleModel: VehicleModel & { _id: any }): Vehicle {
     return new Vehicle({
-      id: vehicleModel.id,
+      id: vehicleModel._id.toString(),
       make: vehicleModel.make,
-      model: vehicleModel.get('model'),
+      model: vehicleModel.model,
       fuelType: vehicleModel.fuelType,
       color: vehicleModel.color,
       licensePlate: vehicleModel.licensePlate,

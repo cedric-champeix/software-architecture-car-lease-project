@@ -11,7 +11,7 @@ export type DeleteClientInput = { id: Client['id'] };
 export interface ClientRepository {
   create({ client }: CreateClientInput): Promise<Client>;
 
-  findById({ id }: FindClientByIdInput): Promise<Client | null>;
+  findById(id: string): Promise<Client | null>;
 
   findAll(): Promise<Client[]>;
 

@@ -31,7 +31,7 @@ describe('FindClientUseCase', () => {
 
     const result = await findClientUseCase.execute({ id: clientId });
 
-    expect(clientRepository.findById).toHaveBeenCalledWith({ id: clientId });
+    expect(clientRepository.findById).toHaveBeenCalledWith(clientId);
     expect(result).toEqual(client);
   });
 });

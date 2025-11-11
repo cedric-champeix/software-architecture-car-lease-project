@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { Client } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
+import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 
 export type AccountDocument = HydratedDocument<Account>;
 
@@ -15,8 +15,8 @@ export class Account {
   @Prop({ required: true })
   balance: number;
 
-  @Prop({ type: 'ObjectId', ref: 'Client' })
-  client: Client;
+  @Prop({ type: 'ObjectId', ref: 'ClientModel' })
+  client: ClientModel;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);

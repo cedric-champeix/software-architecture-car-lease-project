@@ -36,8 +36,8 @@ describe('CreateContractUseCase', () => {
     };
     createContractUseCase = new CreateContractUseCase(
       contractRepository,
-      vehicleRepository,
       clientRepository,
+      vehicleRepository,
     );
   });
 
@@ -59,7 +59,7 @@ describe('CreateContractUseCase', () => {
 
     const result = await createContractUseCase.execute(contractData);
 
-    expect(clientRepository.findById).toHaveBeenCalledWith({ id: contractData.clientId });
+    expect(clientRepository.findById).toHaveBeenCalledWith(contractData.clientId);
     expect(vehicleRepository.findById).toHaveBeenCalledWith(contractData.vehicleId);
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
       contractData.vehicleId,
@@ -89,10 +89,12 @@ describe('CreateContractUseCase', () => {
       startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
     };
-    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client());
+    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client({ id: '1' }));
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(null);
 
-    await expect(createContractUseCase.execute(contractData)).rejects.toThrow('Vehicle not found.');
+    await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
+      'Vehicle not found.',
+    );
   });
 
   it('should throw an error if vehicle is under maintenance', async () => {
@@ -103,15 +105,16 @@ describe('CreateContractUseCase', () => {
       endDate: new Date('2025-12-10'),
     };
     const vehicle = new Vehicle({ id: '1', status: VehicleStatus.MAINTENANCE });
-    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client());
+    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client({ id: '1' }));
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
+    (contractRepository.findByVehicleIdAndDateRange as jest.Mock).mockResolvedValue([]);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
       'Vehicle is under maintenance and cannot be leased.',
     );
   });
 
-  it('should throw an error if vehicle is already leased for the selected period', async () => {
+  it('should throw an error if vehicle is already leased during the period', async () => {
     const contractData = {
       vehicleId: '1',
       clientId: '1',
