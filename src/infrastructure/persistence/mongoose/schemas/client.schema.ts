@@ -1,21 +1,22 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
-export type ClientDocument = HydratedDocument<Client>;
-
-@Schema({ timestamps: true })
-export class Client {
-  @Prop({ required: true, unique: true })
-  email: string;
-
+@Schema({ timestamps: true, collection: 'clients' })
+export class ClientModel extends Document {
   @Prop({ required: true })
   firstName: string;
 
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ default: [], type: [{ type: 'ObjectId', ref: 'Account' }] })
-  accounts: Types.ObjectId[];
+  @Prop({ required: true })
+  birthDate: Date;
+
+  @Prop({ required: true, unique: true })
+  driverLicenseNumber: string;
+
+  @Prop({ required: true })
+  address: string;
 }
 
-export const ClientSchema = SchemaFactory.createForClass(Client);
+export const ClientSchema = SchemaFactory.createForClass(ClientModel);
