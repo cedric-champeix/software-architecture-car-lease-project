@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
+
+import { Contract, ContractStatus } from '../../entities/contract.entity';
+import { VehicleStatus } from '../../entities/vehicle.entity';
+import type { ClientRepository } from '../../repositories/client.repository';
 import type { ContractRepository } from '../../repositories/contract.repository';
 import type { VehicleRepository } from '../../repositories/vehicle.repository';
-import { Contract, ContractStatus } from '../../entities/contract.entity';
-import type { ClientRepository } from '../../repositories/client.repository';
-import { VehicleStatus } from '../../entities/vehicle.entity';
 
 @Injectable()
 export class CreateContractUseCase {
@@ -17,12 +18,12 @@ export class CreateContractUseCase {
   ) {}
 
   async execute(input: {
-    vehicleId: string;
     clientId: string;
-    startDate: Date;
     endDate: Date;
+    startDate: Date;
+    vehicleId: string;
   }): Promise<Contract> {
-            const client = await this.clientRepository.findById(input.clientId);
+    const client = await this.clientRepository.findById(input.clientId);
     if (!client) {
       throw new Error('Client not found.');
     }

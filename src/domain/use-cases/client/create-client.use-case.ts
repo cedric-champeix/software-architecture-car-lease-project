@@ -3,12 +3,12 @@ import { Client } from 'src/domain/entities/client.entity';
 import type { ClientRepository } from 'src/domain/repositories/client.repository';
 
 export type CreateClientUseCaseInput = {
-  firstName: string;
-  lastName: string;
-  email: string;
+  address: string;
   birthDate: Date;
   driverLicenseNumber: string;
-  address: string;
+  email: string;
+  firstName: string;
+  lastName: string;
 };
 
 @Injectable()
@@ -26,13 +26,13 @@ export class CreateClientUseCase {
     address,
   }: CreateClientUseCaseInput): Promise<Client> {
     const client = new Client({
-      id: '',
-      email,
-      firstName,
-      lastName,
+      address,
       birthDate,
       driverLicenseNumber,
-      address,
+      email,
+      firstName,
+      id: '',
+      lastName,
     });
     return this.repository.create({ client });
   }

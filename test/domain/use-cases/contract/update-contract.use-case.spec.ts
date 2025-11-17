@@ -1,6 +1,6 @@
-import { UpdateContractUseCase } from 'src/domain/use-cases/contract/update-contract.use-case';
-import { ContractRepository } from 'src/domain/repositories/contract.repository';
 import { Contract, ContractStatus } from 'src/domain/entities/contract.entity';
+import type { ContractRepository } from 'src/domain/repositories/contract.repository';
+import { UpdateContractUseCase } from 'src/domain/use-cases/contract/update-contract.use-case';
 
 describe('UpdateContractUseCase', () => {
   let updateContractUseCase: UpdateContractUseCase;
@@ -8,11 +8,11 @@ describe('UpdateContractUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
+      save: jest.fn(),
     };
     updateContractUseCase = new UpdateContractUseCase(contractRepository);
   });
@@ -31,7 +31,10 @@ describe('UpdateContractUseCase', () => {
     (contractRepository.findById as jest.Mock).mockResolvedValue(contract);
     (contractRepository.save as jest.Mock).mockResolvedValue(updatedContract);
 
-    const result = await updateContractUseCase.execute(contractId, contractData);
+    const result = await updateContractUseCase.execute(
+      contractId,
+      contractData,
+    );
 
     expect(contractRepository.findById).toHaveBeenCalledWith(contractId);
     expect(contractRepository.save).toHaveBeenCalledWith(

@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
 import { VehicleRepository } from '../../repositories/vehicle.repository';
 
 @Injectable()

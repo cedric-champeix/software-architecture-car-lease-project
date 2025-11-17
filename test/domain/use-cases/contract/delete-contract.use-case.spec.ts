@@ -1,5 +1,5 @@
+import type { ContractRepository } from 'src/domain/repositories/contract.repository';
 import { DeleteContractUseCase } from 'src/domain/use-cases/contract/delete-contract.use-case';
-import { ContractRepository } from 'src/domain/repositories/contract.repository';
 
 describe('DeleteContractUseCase', () => {
   let deleteContractUseCase: DeleteContractUseCase;
@@ -7,11 +7,11 @@ describe('DeleteContractUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
+      save: jest.fn(),
     };
     deleteContractUseCase = new DeleteContractUseCase(contractRepository);
   });

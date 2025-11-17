@@ -1,6 +1,10 @@
+import {
+  FuelType,
+  Vehicle,
+  VehicleStatus,
+} from 'src/domain/entities/vehicle.entity';
+import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
 import { FindAllVehiclesUseCase } from 'src/domain/use-cases/vehicle/find-all-vehicles.use-case';
-import { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
-import { Vehicle, FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
 
 describe('FindAllVehiclesUseCase', () => {
   let findAllVehiclesUseCase: FindAllVehiclesUseCase;
@@ -8,11 +12,11 @@ describe('FindAllVehiclesUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByLicensePlate: jest.fn(),
+      save: jest.fn(),
     };
     findAllVehiclesUseCase = new FindAllVehiclesUseCase(vehicleRepository);
   });
@@ -20,13 +24,13 @@ describe('FindAllVehiclesUseCase', () => {
   it('should return all vehicles', async () => {
     const vehicles = [
       new Vehicle({
+        acquiredDate: new Date(),
+        color: 'blue',
+        fuelType: FuelType.PETROL,
         id: '1',
+        licensePlate: 'ABC-123',
         make: 'Toyota',
         model: 'Corolla',
-        fuelType: FuelType.PETROL,
-        color: 'blue',
-        licensePlate: 'ABC-123',
-        acquiredDate: new Date(),
         status: VehicleStatus.AVAILABLE,
       }),
     ];

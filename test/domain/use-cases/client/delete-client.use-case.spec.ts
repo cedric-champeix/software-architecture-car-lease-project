@@ -1,5 +1,5 @@
+import type { ClientRepository } from 'src/domain/repositories/client.repository';
 import { DeleteClientUseCase } from 'src/domain/use-cases/client/delete-client.use-case';
-import { ClientRepository } from 'src/domain/repositories/client.repository';
 
 describe('DeleteClientUseCase', () => {
   let deleteClientUseCase: DeleteClientUseCase;
@@ -8,10 +8,10 @@ describe('DeleteClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      update: jest.fn(),
       delete: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
     };
     deleteClientUseCase = new DeleteClientUseCase(clientRepository);
   });

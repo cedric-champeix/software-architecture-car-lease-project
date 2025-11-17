@@ -3,23 +3,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Contract } from 'src/domain/entities/contract.entity';
 import { ContractRepository } from 'src/domain/repositories/contract.repository';
-import { ContractModel } from '../schemas/contract.schema';
+
+import { ContractDocument, ContractModel } from '../schemas/contract.schema';
 
 @Injectable()
 export class ContractMongooseRepository implements ContractRepository {
   constructor(
     @InjectModel(ContractModel.name)
-    private readonly contractModel: Model<ContractModel>,
+    private readonly contractModel: Model<ContractDocument>,
   ) {}
 
-  private toDomain(contractModel: ContractModel): Contract {
+  private toDomain(contractModel: ContractDocument): Contract {
     return new Contract({
-      id: contractModel.id,
-      vehicleId: contractModel.vehicleId,
       clientId: contractModel.clientId,
-      startDate: contractModel.startDate,
       endDate: contractModel.endDate,
+      id: contractModel._id.toString(),
+      startDate: contractModel.startDate,
       status: contractModel.status,
+      vehicleId: contractModel.vehicleId,
     });
   }
 
@@ -50,10 +51,8 @@ export class ContractMongooseRepository implements ContractRepository {
   ): Promise<Contract[]> {
     const contracts = await this.contractModel
       .find({
+        $or: [{ endDate: { $gte: startDate }, startDate: { $lte: endDate } }],
         vehicleId,
-        $or: [
-          { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
-        ],
       })
       .exec();
     return contracts.map((c) => this.toDomain(c));

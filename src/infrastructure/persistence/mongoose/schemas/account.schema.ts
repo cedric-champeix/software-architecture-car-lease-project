@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import type { HydratedDocument } from 'mongoose';
 import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 
-export type AccountDocument = HydratedDocument<Account>;
+export type AccountDocument = HydratedDocument<AccountModel>;
 
-@Schema({ timestamps: true })
-export class Account {
+@Schema({ collection: 'accounts', timestamps: true })
+export class AccountModel {
   @Prop({ required: true })
   name: string;
 
@@ -15,12 +15,8 @@ export class Account {
   @Prop({ required: true })
   balance: number;
 
-  @Prop({ type: 'ObjectId', ref: 'ClientModel' })
+  @Prop({ ref: ClientModel.name, type: 'ObjectId' })
   client: ClientModel;
 }
 
-export const AccountSchema = SchemaFactory.createForClass(Account);
-
-AccountSchema.virtual('id').get(function (this: AccountDocument) {
-  return this._id.toHexString();
-});
+export const AccountSchema = SchemaFactory.createForClass(AccountModel);

@@ -1,10 +1,10 @@
-import { CreateContractUseCase } from 'src/domain/use-cases/contract/create-contract.use-case';
-import { ContractRepository } from 'src/domain/repositories/contract.repository';
-import { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
-import { ClientRepository } from 'src/domain/repositories/client.repository';
+import { Client } from 'src/domain/entities/client.entity';
 import { Contract, ContractStatus } from 'src/domain/entities/contract.entity';
 import { Vehicle, VehicleStatus } from 'src/domain/entities/vehicle.entity';
-import { Client } from 'src/domain/entities/client.entity';
+import type { ClientRepository } from 'src/domain/repositories/client.repository';
+import type { ContractRepository } from 'src/domain/repositories/contract.repository';
+import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
+import { CreateContractUseCase } from 'src/domain/use-cases/contract/create-contract.use-case';
 
 describe('CreateContractUseCase', () => {
   let createContractUseCase: CreateContractUseCase;
@@ -14,25 +14,25 @@ describe('CreateContractUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
+      save: jest.fn(),
     };
     vehicleRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByLicensePlate: jest.fn(),
+      save: jest.fn(),
     };
     clientRepository = {
       create: jest.fn(),
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      update: jest.fn(),
       delete: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
     };
     createContractUseCase = new CreateContractUseCase(
       contractRepository,
@@ -43,24 +43,33 @@ describe('CreateContractUseCase', () => {
 
   it('should create a new contract', async () => {
     const contractData = {
-      vehicleId: '1',
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
+      vehicleId: '1',
     };
     const client = new Client({ id: '1' });
     const vehicle = new Vehicle({ id: '1', status: VehicleStatus.AVAILABLE });
-    const contract = new Contract({ ...contractData, status: ContractStatus.PENDING });
+    const contract = new Contract({
+      ...contractData,
+      status: ContractStatus.PENDING,
+    });
 
     (clientRepository.findById as jest.Mock).mockResolvedValue(client);
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
-    (contractRepository.findByVehicleIdAndDateRange as jest.Mock).mockResolvedValue([]);
+    (
+      contractRepository.findByVehicleIdAndDateRange as jest.Mock
+    ).mockResolvedValue([]);
     (contractRepository.save as jest.Mock).mockResolvedValue(contract);
 
     const result = await createContractUseCase.execute(contractData);
 
-    expect(clientRepository.findById).toHaveBeenCalledWith(contractData.clientId);
-    expect(vehicleRepository.findById).toHaveBeenCalledWith(contractData.vehicleId);
+    expect(clientRepository.findById).toHaveBeenCalledWith(
+      contractData.clientId,
+    );
+    expect(vehicleRepository.findById).toHaveBeenCalledWith(
+      contractData.vehicleId,
+    );
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
       contractData.vehicleId,
       contractData.startDate,
@@ -72,24 +81,28 @@ describe('CreateContractUseCase', () => {
 
   it('should throw an error if client not found', async () => {
     const contractData = {
-      vehicleId: '1',
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
+      vehicleId: '1',
     };
     (clientRepository.findById as jest.Mock).mockResolvedValue(null);
 
-    await expect(createContractUseCase.execute(contractData)).rejects.toThrow('Client not found.');
+    await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
+      'Client not found.',
+    );
   });
 
   it('should throw an error if vehicle not found', async () => {
     const contractData = {
-      vehicleId: '1',
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
+      vehicleId: '1',
     };
-    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client({ id: '1' }));
+    (clientRepository.findById as jest.Mock).mockResolvedValue(
+      new Client({ id: '1' }),
+    );
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(null);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
@@ -99,15 +112,19 @@ describe('CreateContractUseCase', () => {
 
   it('should throw an error if vehicle is under maintenance', async () => {
     const contractData = {
-      vehicleId: '1',
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
+      vehicleId: '1',
     };
     const vehicle = new Vehicle({ id: '1', status: VehicleStatus.MAINTENANCE });
-    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client({ id: '1' }));
+    (clientRepository.findById as jest.Mock).mockResolvedValue(
+      new Client({ id: '1' }),
+    );
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
-    (contractRepository.findByVehicleIdAndDateRange as jest.Mock).mockResolvedValue([]);
+    (
+      contractRepository.findByVehicleIdAndDateRange as jest.Mock
+    ).mockResolvedValue([]);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
       'Vehicle is under maintenance and cannot be leased.',
@@ -116,15 +133,17 @@ describe('CreateContractUseCase', () => {
 
   it('should throw an error if vehicle is already leased during the period', async () => {
     const contractData = {
-      vehicleId: '1',
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
+      vehicleId: '1',
     };
     const vehicle = new Vehicle({ id: '1', status: VehicleStatus.AVAILABLE });
     (clientRepository.findById as jest.Mock).mockResolvedValue(new Client());
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
-    (contractRepository.findByVehicleIdAndDateRange as jest.Mock).mockResolvedValue([new Contract()]);
+    (
+      contractRepository.findByVehicleIdAndDateRange as jest.Mock
+    ).mockResolvedValue([new Contract()]);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
       'Vehicle is already leased for the selected period.',

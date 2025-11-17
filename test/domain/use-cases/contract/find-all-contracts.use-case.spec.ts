@@ -1,6 +1,6 @@
-import { FindAllContractsUseCase } from 'src/domain/use-cases/contract/find-all-contracts.use-case';
-import { ContractRepository } from 'src/domain/repositories/contract.repository';
 import { Contract, ContractStatus } from 'src/domain/entities/contract.entity';
+import type { ContractRepository } from 'src/domain/repositories/contract.repository';
+import { FindAllContractsUseCase } from 'src/domain/use-cases/contract/find-all-contracts.use-case';
 
 describe('FindAllContractsUseCase', () => {
   let findAllContractsUseCase: FindAllContractsUseCase;
@@ -8,11 +8,11 @@ describe('FindAllContractsUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
+      save: jest.fn(),
     };
     findAllContractsUseCase = new FindAllContractsUseCase(contractRepository);
   });
@@ -20,12 +20,12 @@ describe('FindAllContractsUseCase', () => {
   it('should return all contracts', async () => {
     const contracts = [
       new Contract({
-        id: '1',
-        vehicleId: '1',
         clientId: '1',
-        startDate: new Date(),
         endDate: new Date(),
+        id: '1',
+        startDate: new Date(),
         status: ContractStatus.ACTIVE,
+        vehicleId: '1',
       }),
     ];
     (contractRepository.findAll as jest.Mock).mockResolvedValue(contracts);

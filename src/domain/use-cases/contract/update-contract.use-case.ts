@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
 import { Contract, ContractStatus } from '../../entities/contract.entity';
 import { ContractRepository } from '../../repositories/contract.repository';
 
@@ -12,8 +13,8 @@ export class UpdateContractUseCase {
   async execute(
     id: string,
     input: {
-      startDate?: Date;
       endDate?: Date;
+      startDate?: Date;
       status?: ContractStatus;
     },
   ): Promise<Contract> {

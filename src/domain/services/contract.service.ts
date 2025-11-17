@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Contract, ContractStatus } from '../entities/contract.entity';
-import { Vehicle, VehicleStatus } from '../entities/vehicle.entity';
-import { ContractRepository } from '../repositories/contract.repository';
+
+import { ContractStatus } from '../entities/contract.entity';
+import { type Vehicle, VehicleStatus } from '../entities/vehicle.entity';
+import type { ContractRepository } from '../repositories/contract.repository';
 
 @Injectable()
 export class ContractService {
@@ -14,11 +15,12 @@ export class ContractService {
     vehicle: Vehicle,
   ): Promise<void> {
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
-      const contracts = await this.contractRepository.findByVehicleIdAndDateRange(
-        vehicle.id,
-        new Date(),
-        new Date(new Date().getFullYear() + 10, 1, 1), // Far future date
-      );
+      const contracts =
+        await this.contractRepository.findByVehicleIdAndDateRange(
+          vehicle.id,
+          new Date(),
+          new Date(new Date().getFullYear() + 10, 1, 1), // Far future date
+        );
 
       for (const contract of contracts) {
         if (contract.status === ContractStatus.PENDING) {

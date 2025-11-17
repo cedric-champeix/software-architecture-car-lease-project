@@ -13,13 +13,8 @@ import {
 } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: ClientModel.name, schema: ClientSchema },
-    ]),
-  ],
   controllers: [ClientController],
-  providers: [
+  exports: [
     CreateClientUseCase,
     FindClientUseCase,
     FindAllClientsUseCase,
@@ -30,7 +25,12 @@ import {
       useClass: ClientMongooseRepository,
     },
   ],
-  exports: [
+  imports: [
+    MongooseModule.forFeature([
+      { name: ClientModel.name, schema: ClientSchema },
+    ]),
+  ],
+  providers: [
     CreateClientUseCase,
     FindClientUseCase,
     FindAllClientsUseCase,

@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
 import { Vehicle, VehicleStatus } from '../../entities/vehicle.entity';
 import { VehicleRepository } from '../../repositories/vehicle.repository';
 import { ContractService } from '../../services/contract.service';
@@ -14,12 +15,12 @@ export class UpdateVehicleUseCase {
   async execute(
     id: string,
     input: {
+      acquiredDate?: Date;
+      color?: string;
+      fuelType?: any;
+      licensePlate?: string;
       make?: string;
       model?: string;
-      fuelType?: any;
-      color?: string;
-      licensePlate?: string;
-      acquiredDate?: Date;
       status?: VehicleStatus;
     },
   ): Promise<Vehicle> {
@@ -40,7 +41,9 @@ export class UpdateVehicleUseCase {
     Object.assign(vehicle, input);
 
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
-      await this.contractService.cancelContractsForVehicleInMaintenance(vehicle);
+      await this.contractService.cancelContractsForVehicleInMaintenance(
+        vehicle,
+      );
     }
 
     return this.vehicleRepository.save(vehicle);

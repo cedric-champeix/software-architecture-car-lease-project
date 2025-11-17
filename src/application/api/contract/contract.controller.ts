@@ -1,20 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
   Inject,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { CreateContractDto } from 'src/application/api/contract/dto/create-contract.dto';
 import { UpdateContractDto } from 'src/application/api/contract/dto/update-contract.dto';
 import { CreateContractUseCase } from 'src/domain/use-cases/contract/create-contract.use-case';
+import { DeleteContractUseCase } from 'src/domain/use-cases/contract/delete-contract.use-case';
 import { FindAllContractsUseCase } from 'src/domain/use-cases/contract/find-all-contracts.use-case';
 import { FindContractUseCase } from 'src/domain/use-cases/contract/find-contract.use-case';
 import { UpdateContractUseCase } from 'src/domain/use-cases/contract/update-contract.use-case';
-import { DeleteContractUseCase } from 'src/domain/use-cases/contract/delete-contract.use-case';
 
 @Controller('contracts')
 export class ContractController {
@@ -47,7 +47,10 @@ export class ContractController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateContractDto: UpdateContractDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateContractDto: UpdateContractDto,
+  ) {
     return this.updateContractUseCase.execute(id, updateContractDto);
   }
 

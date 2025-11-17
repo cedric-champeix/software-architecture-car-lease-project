@@ -6,25 +6,26 @@ import {
   ClientRepository,
   CreateClientInput,
   DeleteClientInput,
-  FindClientByIdInput,
   UpdateClientInput,
 } from 'src/domain/repositories/client.repository';
+import type { ClientDocument } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 
 @Injectable()
 export class ClientMongooseRepository implements ClientRepository {
   constructor(
-    @InjectModel(ClientModel.name) private readonly model: Model<ClientModel>,
+    @InjectModel(ClientModel.name)
+    private readonly model: Model<ClientDocument>,
   ) {}
 
-  private toDomain(clientModel: ClientModel): Client {
+  private toDomain(clientModel: ClientDocument): Client {
     return new Client({
-      id: clientModel.id,
-      firstName: clientModel.firstName,
-      lastName: clientModel.lastName,
+      address: clientModel.address,
       birthDate: clientModel.birthDate,
       driverLicenseNumber: clientModel.driverLicenseNumber,
-      address: clientModel.address,
+      firstName: clientModel.firstName,
+      id: clientModel._id.toString(),
+      lastName: clientModel.lastName,
     });
   }
 

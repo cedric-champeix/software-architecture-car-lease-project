@@ -1,7 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 import { FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
 
-@Schema({ timestamps: true, collection: 'vehicles' })
+export type VehicleDocument = HydratedDocument<VehicleModel>;
+
+@Schema({ collection: 'vehicles', timestamps: true })
 export class VehicleModel {
   @Prop({ required: true })
   make: string;
@@ -9,7 +12,7 @@ export class VehicleModel {
   @Prop({ required: true })
   model: string;
 
-  @Prop({ required: true, type: String, enum: FuelType })
+  @Prop({ enum: FuelType, required: true, type: String })
   fuelType: FuelType;
 
   @Prop({ required: true })
@@ -22,10 +25,10 @@ export class VehicleModel {
   acquiredDate: Date;
 
   @Prop({
+    default: VehicleStatus.AVAILABLE,
+    enum: VehicleStatus,
     required: true,
     type: String,
-    enum: VehicleStatus,
-    default: VehicleStatus.AVAILABLE,
   })
   status: VehicleStatus;
 }

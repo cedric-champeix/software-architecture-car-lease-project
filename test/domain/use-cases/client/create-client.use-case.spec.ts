@@ -1,6 +1,6 @@
-import { CreateClientUseCase } from 'src/domain/use-cases/client/create-client.use-case';
-import { ClientRepository } from 'src/domain/repositories/client.repository';
 import { Client } from 'src/domain/entities/client.entity';
+import type { ClientRepository } from 'src/domain/repositories/client.repository';
+import { CreateClientUseCase } from 'src/domain/use-cases/client/create-client.use-case';
 
 describe('CreateClientUseCase', () => {
   let createClientUseCase: CreateClientUseCase;
@@ -9,22 +9,22 @@ describe('CreateClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      update: jest.fn(),
       delete: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
     };
     createClientUseCase = new CreateClientUseCase(clientRepository);
   });
 
   it('should create a new client', async () => {
     const clientData = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'jhon.doe@email.com',
+      address: '123 Main St',
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345',
-      address: '123 Main St',
+      email: 'jhon.doe@email.com',
+      firstName: 'John',
+      lastName: 'Doe',
     };
     const client = new Client(clientData);
     (clientRepository.create as jest.Mock).mockResolvedValue(client);
@@ -39,9 +39,9 @@ describe('CreateClientUseCase', () => {
 
     expect(clientRepository.create).toHaveBeenCalledWith({
       client: {
-        id: '',
         email,
         firstName,
+        id: '',
         lastName,
       },
     });

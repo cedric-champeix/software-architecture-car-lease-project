@@ -1,6 +1,6 @@
-import { UpdateClientUseCase } from 'src/domain/use-cases/client/update-client.use-case';
-import { ClientRepository } from 'src/domain/repositories/client.repository';
 import { Client } from 'src/domain/entities/client.entity';
+import type { ClientRepository } from 'src/domain/repositories/client.repository';
+import { UpdateClientUseCase } from 'src/domain/use-cases/client/update-client.use-case';
 
 describe('UpdateClientUseCase', () => {
   let updateClientUseCase: UpdateClientUseCase;
@@ -9,10 +9,10 @@ describe('UpdateClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      update: jest.fn(),
       delete: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
     };
     updateClientUseCase = new UpdateClientUseCase(clientRepository);
   });
@@ -30,13 +30,13 @@ describe('UpdateClientUseCase', () => {
     (clientRepository.update as jest.Mock).mockResolvedValue(client);
 
     const result = await updateClientUseCase.execute({
-      id: clientId,
       clientData,
+      id: clientId,
     });
 
     expect(clientRepository.update).toHaveBeenCalledWith({
-      id: clientId,
       clientData,
+      id: clientId,
     });
     expect(result).toEqual(client);
   });

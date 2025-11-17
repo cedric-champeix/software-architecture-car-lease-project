@@ -3,24 +3,25 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Vehicle } from 'src/domain/entities/vehicle.entity';
 import { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
-import { VehicleModel } from '../schemas/vehicle.schema';
+
+import { VehicleDocument, VehicleModel } from '../schemas/vehicle.schema';
 
 @Injectable()
 export class VehicleMongooseRepository implements VehicleRepository {
   constructor(
     @InjectModel(VehicleModel.name)
-    private readonly vehicleModel: Model<VehicleModel>,
+    private readonly vehicleModel: Model<VehicleDocument>,
   ) {}
 
-  private toDomain(vehicleModel: VehicleModel & { _id: any }): Vehicle {
+  private toDomain(vehicleModel: VehicleDocument): Vehicle {
     return new Vehicle({
+      acquiredDate: vehicleModel.acquiredDate,
+      color: vehicleModel.color,
+      fuelType: vehicleModel.fuelType,
       id: vehicleModel._id.toString(),
+      licensePlate: vehicleModel.licensePlate,
       make: vehicleModel.make,
       model: vehicleModel.model,
-      fuelType: vehicleModel.fuelType,
-      color: vehicleModel.color,
-      licensePlate: vehicleModel.licensePlate,
-      acquiredDate: vehicleModel.acquiredDate,
       status: vehicleModel.status,
     });
   }

@@ -1,5 +1,5 @@
-import { IsString, IsDate, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateContractDto {
   @IsString()

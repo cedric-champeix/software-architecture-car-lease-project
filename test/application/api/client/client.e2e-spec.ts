@@ -1,10 +1,15 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import request from 'supertest';
-import { AppModule } from 'src/app.module';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { Model } from 'mongoose';
+import { AppModule } from 'src/app.module';
 import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
+import request from 'supertest';
+import type { App } from 'supertest/types';
+
+import type { Client } from '/domain/entities/client.entity';
 
 describe('ClientController (e2e)', () => {
   let app: INestApplication;
@@ -32,33 +37,36 @@ describe('ClientController (e2e)', () => {
     await app.close();
   });
 
-  it('/clients (POST)', () => {
-    return request(app.getHttpServer())
+  it('/clients (POST)', async () => {
+    const response = await request(app.getHttpServer() as App)
       .post('/clients')
       .send({
-        firstName: 'John',
-        lastName: 'Doe',
+        address: '123 Main St',
         birthDate: '1990-01-01',
         driverLicenseNumber: '54321-post',
-        address: '123 Main St',
         email: 'john.doe@example.com',
-      })
-      .expect(201);
+        firstName: 'John',
+        lastName: 'Doe',
+      });
+
+    expect(response.status).toBe(201);
   });
 
   it('/clients (GET)', async () => {
     const client = await clientModel.create({
-      firstName: 'John',
-      lastName: 'Doe',
+      address: '123 Main St',
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345-get',
-      address: '123 Main St',
+      firstName: 'John',
+      lastName: 'Doe',
     });
-    return request(app.getHttpServer())
-      .get('/clients')
-      .expect(200)
-      .then((res) => {
-        expect(res.body[0].id).toEqual(client.id.toString());
-      });
+
+    const response = await request(app.getHttpServer() as App).get('/clients');
+
+    const clients = response.body as Client[];
+
+    expect(response.status).toBe(200);
+
+    expect(clients[0].id).toBe(client._id.toString());
   });
 });

@@ -2,8 +2,8 @@ import type { Client } from 'src/domain/entities/client.entity';
 import type { ClientRepository } from 'src/domain/repositories/client.repository';
 
 export type UpdateClientUseCaseInput = {
-  id: string;
   clientData: Omit<Partial<Client>, 'id'>;
+  id: string;
 };
 
 export class UpdateClientUseCase {
@@ -13,6 +13,6 @@ export class UpdateClientUseCase {
     id,
     clientData,
   }: UpdateClientUseCaseInput): Promise<Client | null> {
-    return this.repository.update({ id, clientData });
+    return this.repository.update({ clientData, id });
   }
 }

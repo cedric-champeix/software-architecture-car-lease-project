@@ -66,8 +66,8 @@ export class ClientController {
     @Body() updateClientDto: UpdateClientDto,
   ) {
     const client = await this.updateClientUseCase.execute({
-      id,
       clientData: UpdateClientDtoMapper.toUseCaseInput(updateClientDto),
+      id,
     });
 
     if (!client) throw new NotFoundException('Client not found');

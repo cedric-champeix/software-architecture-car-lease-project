@@ -1,5 +1,5 @@
-import { IsString, IsDate, IsEnum, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { FuelType } from 'src/domain/entities/vehicle.entity';
 
 export class CreateVehicleDto {

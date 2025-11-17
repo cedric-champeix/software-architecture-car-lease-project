@@ -1,4 +1,4 @@
-import { Contract } from '../entities/contract.entity';
+import type { Contract } from '../entities/contract.entity';
 
 export abstract class ContractRepository {
   abstract findById(id: string): Promise<Contract | null>;

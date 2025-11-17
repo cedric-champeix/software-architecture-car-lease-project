@@ -1,7 +1,11 @@
+import {
+  FuelType,
+  Vehicle,
+  VehicleStatus,
+} from 'src/domain/entities/vehicle.entity';
+import type { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
+import type { ContractService } from 'src/domain/services/contract.service';
 import { UpdateVehicleUseCase } from 'src/domain/use-cases/vehicle/update-vehicle.use-case';
-import { VehicleRepository } from 'src/domain/repositories/vehicle.repository';
-import { Vehicle, FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
-import { ContractService } from 'src/domain/services/contract.service';
 
 describe('UpdateVehicleUseCase', () => {
   let updateVehicleUseCase: UpdateVehicleUseCase;
@@ -10,11 +14,11 @@ describe('UpdateVehicleUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      save: jest.fn(),
       deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
       findByLicensePlate: jest.fn(),
+      save: jest.fn(),
     };
     contractService = {
       cancelContractsForVehicleInMaintenance: jest.fn(),
@@ -29,17 +33,17 @@ describe('UpdateVehicleUseCase', () => {
   it('should update a vehicle', async () => {
     const vehicleId = '123';
     const vehicleData = {
-      model: 'Camry',
       color: 'red',
+      model: 'Camry',
     };
     const vehicle = new Vehicle({
+      acquiredDate: new Date(),
+      color: 'blue',
+      fuelType: FuelType.PETROL,
       id: vehicleId,
+      licensePlate: 'ABC-123',
       make: 'Toyota',
       model: 'Corolla',
-      fuelType: FuelType.PETROL,
-      color: 'blue',
-      licensePlate: 'ABC-123',
-      acquiredDate: new Date(),
       status: VehicleStatus.AVAILABLE,
     });
     const updatedVehicle = new Vehicle({ ...vehicle, ...vehicleData });

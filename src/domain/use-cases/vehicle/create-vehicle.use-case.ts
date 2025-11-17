@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+
 import { Vehicle, VehicleStatus } from '../../entities/vehicle.entity';
 import { VehicleRepository } from '../../repositories/vehicle.repository';
 
@@ -10,12 +11,12 @@ export class CreateVehicleUseCase {
   ) {}
 
   async execute(input: {
+    acquiredDate: Date;
+    color: string;
+    fuelType: any;
+    licensePlate: string;
     make: string;
     model: string;
-    fuelType: any;
-    color: string;
-    licensePlate: string;
-    acquiredDate: Date;
   }): Promise<Vehicle> {
     const existingVehicle = await this.vehicleRepository.findByLicensePlate(
       input.licensePlate,

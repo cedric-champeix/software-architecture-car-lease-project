@@ -1,6 +1,6 @@
-import { FindClientUseCase } from 'src/domain/use-cases/client/find-client.use-case';
-import { ClientRepository } from 'src/domain/repositories/client.repository';
 import { Client } from 'src/domain/entities/client.entity';
+import type { ClientRepository } from 'src/domain/repositories/client.repository';
+import { FindClientUseCase } from 'src/domain/use-cases/client/find-client.use-case';
 
 describe('FindClientUseCase', () => {
   let findClientUseCase: FindClientUseCase;
@@ -9,10 +9,10 @@ describe('FindClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      findById: jest.fn(),
-      findAll: jest.fn(),
-      update: jest.fn(),
       delete: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      update: jest.fn(),
     };
     findClientUseCase = new FindClientUseCase(clientRepository);
   });
@@ -20,12 +20,12 @@ describe('FindClientUseCase', () => {
   it('should return a client by id', async () => {
     const clientId = '123';
     const client = new Client({
-      id: clientId,
-      firstName: 'John',
-      lastName: 'Doe',
+      address: '123 Main St',
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345',
-      address: '123 Main St',
+      firstName: 'John',
+      id: clientId,
+      lastName: 'Doe',
     });
     (clientRepository.findById as jest.Mock).mockResolvedValue(client);
 

@@ -1,13 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { ContractStatus } from 'src/domain/entities/contract.entity';
 
-@Schema({ timestamps: true, collection: 'contracts' })
-export class ContractModel extends Document {
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'VehicleModel' })
+export type ContractDocument = HydratedDocument<ContractModel>;
+
+@Schema({ collection: 'contracts', timestamps: true })
+export class ContractModel {
+  @Prop({ ref: 'VehicleModel', type: MongooseSchema.Types.ObjectId })
   vehicleId: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'ClientModel' })
+  @Prop({ ref: 'ClientModel', type: MongooseSchema.Types.ObjectId })
   clientId: string;
 
   @Prop({ required: true })
@@ -17,10 +19,10 @@ export class ContractModel extends Document {
   endDate: Date;
 
   @Prop({
+    default: ContractStatus.PENDING,
+    enum: ContractStatus,
     required: true,
     type: String,
-    enum: ContractStatus,
-    default: ContractStatus.PENDING,
   })
   status: ContractStatus;
 }

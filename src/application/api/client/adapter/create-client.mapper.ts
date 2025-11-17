@@ -4,12 +4,12 @@ import type { CreateClientUseCaseInput } from 'src/domain/use-cases/client/creat
 export class CreateClientDtoMapper {
   static toUseCaseInput(dto: CreateClientDto): CreateClientUseCaseInput {
     return {
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      email: dto.email,
+      address: dto.address,
       birthDate: dto.birthDate,
       driverLicenseNumber: dto.driverLicenseNumber,
-      address: dto.address,
+      email: dto.email,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
     };
   }
 }

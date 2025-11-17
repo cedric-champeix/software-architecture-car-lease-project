@@ -1,13 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import request from 'supertest';
-import { AppModule } from 'src/app.module';
+import type { INestApplication } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { ContractModel } from 'src/infrastructure/persistence/mongoose/schemas/contract.schema';
-import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
-import { VehicleModel } from 'src/infrastructure/persistence/mongoose/schemas/vehicle.schema';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
+import type { Model } from 'mongoose';
+import { AppModule } from 'src/app.module';
 import { FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
+import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
+import { ContractModel } from 'src/infrastructure/persistence/mongoose/schemas/contract.schema';
+import { VehicleModel } from 'src/infrastructure/persistence/mongoose/schemas/vehicle.schema';
+import request from 'supertest';
+import type { App } from 'supertest/types';
 
 describe('ContractController (e2e)', () => {
   let app: INestApplication;
@@ -47,36 +50,37 @@ describe('ContractController (e2e)', () => {
 
   it('/contracts (POST)', async () => {
     const client = await clientModel.create({
-      firstName: 'John',
-      lastName: 'Doe',
+      address: '123 Main St',
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345',
-      address: '123 Main St',
       email: 'john.doe.contract@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
     });
 
     const vehicle = await vehicleModel.create({
-      make: 'Toyota',
-      model: 'Corolla',
+      acquiredDate: new Date(),
+      color: 'Black',
+      dailyRate: 50,
       fuelType: FuelType.PETROL,
-      vehicleStatus: VehicleStatus.AVAILABLE,
       licensePlate: 'AB-123-CD',
+      make: 'Toyota',
+      mileage: 10000,
+      model: 'Corolla',
+      vehicleStatus: VehicleStatus.AVAILABLE,
       vin: '123456789',
       year: 2020,
-      mileage: 10000,
-      dailyRate: 50,
-      color: 'Black',
-      acquiredDate: new Date(),
     });
 
-    return request(app.getHttpServer())
+    const response = await request(app.getHttpServer() as App)
       .post('/contracts')
       .send({
-        clientId: client.id,
-        vehicleId: vehicle.id,
-        startDate: '2025-11-10',
+        clientId: client._id.toString(),
         endDate: '2025-12-10',
-      })
-      .expect(201);
+        startDate: '2025-11-10',
+        vehicleId: vehicle._id.toString(),
+      });
+
+    expect(response.status).toBe(201);
   });
 });
