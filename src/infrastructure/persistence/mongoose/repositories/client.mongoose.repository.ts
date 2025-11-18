@@ -1,56 +1,47 @@
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Client } from 'src/domain/entities/client.entity';
-import type {
+import {
   ClientRepository,
   CreateClientInput,
   DeleteClientInput,
-  FindClientByIdInput,
   UpdateClientInput,
 } from 'src/domain/repositories/client.repository';
-import { ClientDocument } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
+import type { ClientDocument } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
+import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 
-export class MongoClientRepository implements ClientRepository {
+@Injectable()
+export class ClientMongooseRepository implements ClientRepository {
   constructor(
-    @InjectModel('Client') private readonly model: Model<ClientDocument>,
+    @InjectModel(ClientModel.name)
+    private readonly model: Model<ClientDocument>,
   ) {}
 
-  async create({ client }: CreateClientInput): Promise<Client> {
-    const created = await this.model.create(client);
-
+  private toDomain(clientModel: ClientDocument): Client {
     return new Client({
-      id: created._id.toString(),
-      email: created.email,
-      firstName: created.firstName,
-      lastName: created.lastName,
+      address: clientModel.address,
+      birthDate: clientModel.birthDate,
+      driverLicenseNumber: clientModel.driverLicenseNumber,
+      firstName: clientModel.firstName,
+      id: clientModel._id.toString(),
+      lastName: clientModel.lastName,
     });
   }
 
-  async findById({ id }: FindClientByIdInput): Promise<Client | null> {
-    const doc = await this.model.findById(id);
+  async create({ client }: CreateClientInput): Promise<Client> {
+    const created = await this.model.create(client);
+    return this.toDomain(created);
+  }
 
-    return doc
-      ? new Client({
-          id: doc._id.toString(),
-          email: doc.email,
-          firstName: doc.firstName,
-          lastName: doc.lastName,
-        })
-      : null;
+  async findById(id: string): Promise<Client | null> {
+    const doc = await this.model.findById(id);
+    return doc ? this.toDomain(doc) : null;
   }
 
   async findAll(): Promise<Client[]> {
     const docs = await this.model.find();
-
-    return docs.map(
-      (d) =>
-        new Client({
-          id: d._id.toString(),
-          email: d.email,
-          firstName: d.firstName,
-          lastName: d.lastName,
-        }),
-    );
+    return docs.map((d) => this.toDomain(d));
   }
 
   async update({ id, clientData }: UpdateClientInput): Promise<Client | null> {
@@ -60,17 +51,11 @@ export class MongoClientRepository implements ClientRepository {
 
     if (!updated) return null;
 
-    return new Client({
-      id: updated._id.toString(),
-      email: updated.email,
-      firstName: updated.firstName,
-      lastName: updated.lastName,
-    });
+    return this.toDomain(updated);
   }
 
   async delete({ id }: DeleteClientInput): Promise<boolean> {
     const result = await this.model.findByIdAndDelete(id);
-
     return result !== null;
   }
 }

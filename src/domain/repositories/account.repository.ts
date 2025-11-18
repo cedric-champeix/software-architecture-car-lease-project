@@ -1,13 +1,13 @@
-import { Account } from 'src/domain/entities/account.entity';
+import type { Account } from 'src/domain/entities/account.entity';
 
 export interface AccountRepository {
   create(account: Account): Promise<Account>;
 
-  findById(id: string): Promise<Account | null>;
+  delete(id: string): Promise<void>;
 
   findAll(): Promise<Account[]>;
 
-  update(account: Account): Promise<Account | null>;
+  findById(id: string): Promise<Account | null>;
 
-  delete(id: string): Promise<void>;
+  update(account: Account): Promise<Account | null>;
 }

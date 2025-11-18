@@ -1,10 +1,16 @@
-import type { Client } from 'src/domain/entities/client.entity';
-import type { ClientRepository } from 'src/domain/repositories/client.repository';
+import { Inject, Injectable } from '@nestjs/common';
 
+import { Client } from '../../entities/client.entity';
+import type { ClientRepository } from '../../repositories/client.repository';
+
+@Injectable()
 export class FindAllClientsUseCase {
-  constructor(private readonly repository: ClientRepository) {}
+  constructor(
+    @Inject('ClientRepository')
+    private readonly clientRepository: ClientRepository,
+  ) {}
 
   async execute(): Promise<Client[]> {
-    return this.repository.findAll();
+    return this.clientRepository.findAll();
   }
 }

@@ -20,8 +20,8 @@ export enum VehicleStatus {
 }
 
 export enum FuelType {
-  PETROL = 'petrol',
   DIESEL = 'diesel',
   ELECTRIC = 'electric',
   HYBRID = 'hybrid',
+  PETROL = 'petrol',
 }

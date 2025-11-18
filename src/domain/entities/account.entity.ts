@@ -10,10 +10,10 @@ export class Account {
     type,
     balance,
   }: {
+    balance: number;
     id: string;
     name: string;
     type: string;
-    balance: number;
   }) {
     this.id = id;
     this._name = name;
