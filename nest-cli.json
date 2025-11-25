@@ -3,6 +3,63 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "domain": {
+      "type": "library",
+      "root": "libs/domain",
+      "entryFile": "index",
+      "sourceRoot": "libs/domain/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/domain/tsconfig.lib.json"
+      }
+    },
+    "in-cron": {
+      "type": "library",
+      "root": "libs/in-cron",
+      "entryFile": "index",
+      "sourceRoot": "libs/in-cron/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/in-cron/tsconfig.lib.json"
+      }
+    },
+    "in-messages": {
+      "type": "library",
+      "root": "libs/in-messages",
+      "entryFile": "index",
+      "sourceRoot": "libs/in-messages/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/in-messages/tsconfig.lib.json"
+      }
+    },
+    "in-rest": {
+      "type": "library",
+      "root": "libs/in-rest",
+      "entryFile": "index",
+      "sourceRoot": "libs/in-rest/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/in-rest/tsconfig.lib.json"
+      }
+    },
+    "out-messages": {
+      "type": "library",
+      "root": "libs/out-messages",
+      "entryFile": "index",
+      "sourceRoot": "libs/out-messages/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/out-messages/tsconfig.lib.json"
+      }
+    },
+    "out-mongoose": {
+      "type": "library",
+      "root": "libs/out-mongoose",
+      "entryFile": "index",
+      "sourceRoot": "libs/out-mongoose/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/out-mongoose/tsconfig.lib.json"
+      }
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { FuelType } from 'src/domain/entities/vehicle.entity';
+import { FuelType, MotorizationType } from 'src/domain/entities/vehicle.entity';
 
+// TODO: the licensePlate should be unique
 export class CreateVehicleDto {
   @IsString()
   @IsNotEmpty()
@@ -14,6 +15,10 @@ export class CreateVehicleDto {
   @IsEnum(FuelType)
   @IsNotEmpty()
   fuelType: FuelType;
+
+  @IsEnum(MotorizationType)
+  @IsNotEmpty()
+  motorizationType: MotorizationType;
 
   @IsString()
   @IsNotEmpty()

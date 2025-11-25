@@ -1,11 +1,12 @@
+import { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance.use-case';
+import { CreateContractUseCase } from '@lib/domain/use-cases/contract/create-contract.use-case';
+import { DeleteContractUseCase } from '@lib/domain/use-cases/contract/delete-contract.use-case';
+import { FindAllContractsUseCase } from '@lib/domain/use-cases/contract/find-all-contracts.use-case';
+import { FindContractUseCase } from '@lib/domain/use-cases/contract/find-contract.use-case';
+import { HandleOverdueContractsUseCase } from '@lib/domain/use-cases/contract/handle-overdue-contracts.use-case';
+import { UpdateContractUseCase } from '@lib/domain/use-cases/contract/update-contract.use-case';
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ContractService } from 'src/domain/services/contract.service';
-import { CreateContractUseCase } from 'src/domain/use-cases/contract/create-contract.use-case';
-import { DeleteContractUseCase } from 'src/domain/use-cases/contract/delete-contract.use-case';
-import { FindAllContractsUseCase } from 'src/domain/use-cases/contract/find-all-contracts.use-case';
-import { FindContractUseCase } from 'src/domain/use-cases/contract/find-contract.use-case';
-import { UpdateContractUseCase } from 'src/domain/use-cases/contract/update-contract.use-case';
 import { ContractMongooseRepository } from 'src/infrastructure/persistence/mongoose/repositories/contract.mongoose.repository';
 import {
   ContractModel,
@@ -18,7 +19,10 @@ import { ContractController } from './contract.controller';
 
 @Module({
   controllers: [ContractController],
-  exports: [ContractService],
+  exports: [
+    CancelContractsForVehicleInMaintenanceUseCase,
+    HandleOverdueContractsUseCase,
+  ],
   imports: [
     MongooseModule.forFeature([
       { name: ContractModel.name, schema: ContractSchema },
@@ -32,7 +36,8 @@ import { ContractController } from './contract.controller';
     FindContractUseCase,
     UpdateContractUseCase,
     DeleteContractUseCase,
-    ContractService,
+    CancelContractsForVehicleInMaintenanceUseCase,
+    HandleOverdueContractsUseCase,
     {
       provide: 'ContractRepository',
       useClass: ContractMongooseRepository,
