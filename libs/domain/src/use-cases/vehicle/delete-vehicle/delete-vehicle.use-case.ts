@@ -1,5 +1,5 @@
-import { UseCase } from 'src/common/use-cases';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 
 export type DeleteVehicleUseCaseInput = {
   id: string;

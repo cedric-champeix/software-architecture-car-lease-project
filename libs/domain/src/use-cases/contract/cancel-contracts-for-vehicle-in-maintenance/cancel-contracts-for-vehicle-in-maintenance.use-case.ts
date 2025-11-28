@@ -1,10 +1,10 @@
-import { UseCase } from 'src/common/use-cases';
-import { ONE_YEAR_IN_MS } from 'src/constants/constant';
-import { UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { Vehicle } from 'src/entities/vehicle';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import { ONE_YEAR_IN_MS } from '@lib/domain/constants/constant';
+import { UpdateContract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { Vehicle } from '@lib/domain/entities/vehicle';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 export const MAINTENANCE_DATE_RANGE = new Date(
   new Date().getTime() + ONE_YEAR_IN_MS,
@@ -27,18 +27,18 @@ export class CancelContractsForVehicleInMaintenanceUseCase extends UseCase<
           vehicleId: vehicle.id,
         });
 
-      contracts.forEach(async (contract) => {
+      for (const contract of contracts) {
         if (contract.status === ContractStatus.PENDING) {
           const updatedContract = new UpdateContract({
             status: ContractStatus.CANCELLED,
           });
 
           await this.contractRepository.update({
-            id: contract.id,
             contract: updatedContract,
+            id: contract.id,
           });
         }
-      });
+      }
     }
   }
 }

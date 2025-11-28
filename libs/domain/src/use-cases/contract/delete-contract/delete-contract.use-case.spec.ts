@@ -1,7 +1,7 @@
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
-import { DeleteContractUseCase } from '.';
 import type { DeleteContractUseCaseInput } from '.';
+import { DeleteContractUseCase } from '.';
 
 describe('DeleteContractUseCase', () => {
   let deleteContractUseCase: DeleteContractUseCase;

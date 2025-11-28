@@ -1,5 +1,5 @@
-import { Client } from 'src/entities/client/client.entity';
-import type { ClientRepository } from 'src/repositories/client.repository';
+import { Client } from '@lib/domain/entities/client/client.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 import { FindClientUseCase } from '.';
 

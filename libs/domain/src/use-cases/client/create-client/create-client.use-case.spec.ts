@@ -1,18 +1,7 @@
-import { Client } from 'src/entities/client/client.entity';
-import type { ClientRepository } from 'src/repositories/client.repository';
+import { Client } from '@lib/domain/entities/client/client.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 import { CreateClientUseCase } from '.';
-
-const clientMock = new Client({
-  id: '1',
-  address: '123 Main St',
-  birthDate: new Date('1990-01-01'),
-  driverLicenseNumber: '12345',
-  email: 'jhon.doe@email.com',
-  firstName: 'John',
-  lastName: 'Doe',
-  phoneNumber: '+1234567890',
-});
 
 describe('CreateClientUseCase', () => {
   let createClientUseCase: CreateClientUseCase;

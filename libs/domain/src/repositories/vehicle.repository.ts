@@ -2,19 +2,21 @@ import type {
   CreateVehicle,
   UpdateVehicle,
   Vehicle,
-} from 'src/entities/vehicle';
+} from '@lib/domain/entities/vehicle';
 
-type FindVehicleByIdInput = { id: Vehicle['id'] };
+export type FindVehicleByIdInput = { id: Vehicle['id'] };
 
-type FindVehicleByLicensePlateInput = { licensePlate: Vehicle['licensePlate'] };
+export type FindVehicleByLicensePlateInput = {
+  licensePlate: Vehicle['licensePlate'];
+};
 
-type FindAllVehicleInput = {};
+export type FindAllVehicleInput = Record<string, never>;
 
-type CreateVehicleInput = { vehicle: CreateVehicle };
+export type CreateVehicleInput = { vehicle: CreateVehicle };
 
-type UpdateVehicleInput = { id: Vehicle['id']; vehicle: UpdateVehicle };
+export type UpdateVehicleInput = { id: Vehicle['id']; vehicle: UpdateVehicle };
 
-type DeleteVehicleInput = { id: Vehicle['id'] };
+export type DeleteVehicleInput = { id: Vehicle['id'] };
 
 export abstract class VehicleRepository {
   abstract findById({ id }: FindVehicleByIdInput): Promise<Vehicle | null>;
@@ -23,7 +25,7 @@ export abstract class VehicleRepository {
     licensePlate,
   }: FindVehicleByLicensePlateInput): Promise<Vehicle | null>;
 
-  abstract findAll({}: FindAllVehicleInput): Promise<Vehicle[]>;
+  abstract findAll(input: FindAllVehicleInput): Promise<Vehicle[]>;
 
   abstract create({ vehicle }: CreateVehicleInput): Promise<Vehicle>;
 

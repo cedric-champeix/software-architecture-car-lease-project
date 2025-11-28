@@ -1,5 +1,5 @@
-import { UseCase } from 'src/common/use-cases';
-import type { ClientRepository } from 'src/repositories/client.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 export type DeleteClientUseCaseInput = {
   id: string;

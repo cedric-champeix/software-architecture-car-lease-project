@@ -1,7 +1,7 @@
-import { UseCase } from 'src/common/use-cases';
-import type { Contract } from 'src/entities/contract';
-import type { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type { Contract } from '@lib/domain/entities/contract';
+import type { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 export type UpdateContractUseCaseInput = {
   id: string;

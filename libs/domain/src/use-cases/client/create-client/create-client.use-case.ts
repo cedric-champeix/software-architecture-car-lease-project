@@ -1,7 +1,7 @@
-import { UseCase } from 'src/common/use-cases';
-import { CreateClient } from 'src/entities/client';
-import type { Client } from 'src/entities/client/client.entity';
-import type { ClientRepository } from 'src/repositories/client.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import { CreateClient } from '@lib/domain/entities/client';
+import type { Client } from '@lib/domain/entities/client/client.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 export type CreateClientUseCaseInput = {
   address: string;
