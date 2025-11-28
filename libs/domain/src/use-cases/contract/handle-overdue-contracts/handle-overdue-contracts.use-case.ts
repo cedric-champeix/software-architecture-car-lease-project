@@ -1,35 +1,51 @@
-import { ContractStatus } from 'src/entities/contract.entity';
+import { UseCase } from 'src/common/use-cases';
+import { ONE_DAY_IN_MS } from 'src/constants/constant';
+import { UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 
-export class HandleOverdueContractsUseCase {
-  constructor(private readonly contractRepository: ContractRepository) {}
+const AFFECTED_CONTRACTS_DATE_RANGE = ONE_DAY_IN_MS * 3;
+
+export class HandleOverdueContractsUseCase extends UseCase<void, void> {
+  constructor(private readonly contractRepository: ContractRepository) {
+    super();
+  }
 
   async execute(): Promise<void> {
-    const now = new Date();
-    const contracts = await this.contractRepository.findAll();
+    const contracts = await this.contractRepository.findAll({});
+
     const overdueContracts = contracts.filter(
       (contract) =>
-        contract.status === ContractStatus.ACTIVE && contract.endDate < now,
+        contract.status === ContractStatus.ACTIVE &&
+        contract.endDate < new Date(),
     );
 
-    for (const contract of overdueContracts) {
-      contract.status = ContractStatus.OVERDUE;
+    overdueContracts.forEach(async ({ id, startDate, endDate, vehicleId }) => {
+      const updateContract = new UpdateContract({
+        status: ContractStatus.OVERDUE,
+      });
 
-      await this.contractRepository.save(contract);
+      await this.contractRepository.update({ contract: updateContract, id });
 
       const affectedContracts =
-        await this.contractRepository.findByVehicleIdAndDateRange(
-          contract.vehicleId,
-          contract.endDate,
-          new Date(now.getTime() + 1000 * 60 * 60 * 24 * 365), // 1 year in the future
-        );
+        await this.contractRepository.findByVehicleIdAndDateRange({
+          endDate: new Date(endDate.getTime() + AFFECTED_CONTRACTS_DATE_RANGE),
+          startDate,
+          vehicleId,
+        });
 
-      for (const affectedContract of affectedContracts) {
-        if (affectedContract.id !== contract.id) {
-          affectedContract.status = ContractStatus.CANCELED;
-          await this.contractRepository.save(affectedContract);
+      affectedContracts.forEach(async (affectedContract) => {
+        if (affectedContract.id !== id) {
+          const updateContract = new UpdateContract({
+            status: ContractStatus.CANCELLED,
+          });
+
+          await this.contractRepository.update({
+            contract: updateContract,
+            id: affectedContract.id,
+          });
         }
-      }
-    }
+      });
+    });
   }
 }

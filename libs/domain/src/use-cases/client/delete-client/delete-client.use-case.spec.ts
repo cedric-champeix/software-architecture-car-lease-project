@@ -9,7 +9,7 @@ describe('DeleteClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      delete: jest.fn(),
+      deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
@@ -19,10 +19,11 @@ describe('DeleteClientUseCase', () => {
 
   it('should delete a client', async () => {
     const clientId = '123';
-    (clientRepository.delete as jest.Mock).mockResolvedValue(true);
+
+    (clientRepository.deleteById as jest.Mock).mockResolvedValue(true);
 
     await deleteClientUseCase.execute({ id: clientId });
 
-    expect(clientRepository.delete).toHaveBeenCalledWith({ id: clientId });
+    expect(clientRepository.deleteById).toHaveBeenCalledWith({ id: clientId });
   });
 });

@@ -1,12 +1,22 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/car-leasing-project/src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true
+    "webpack": true,
+    "tsConfigPath": "apps/car-leasing-project/tsconfig.app.json"
   },
   "projects": {
+    "car-leasing-project": {
+      "type": "application",
+      "root": "apps/car-leasing-project",
+      "entryFile": "main",
+      "sourceRoot": "apps/car-leasing-project/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/car-leasing-project/tsconfig.app.json"
+      }
+    },
     "domain": {
       "type": "library",
       "root": "libs/domain",
@@ -61,5 +71,7 @@
         "tsConfigPath": "libs/out-mongoose/tsconfig.lib.json"
       }
     }
-  }
+  },
+  "monorepo": true,
+  "root": "apps/car-leasing-project"
 }

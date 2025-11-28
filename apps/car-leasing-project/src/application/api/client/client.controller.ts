@@ -10,11 +10,11 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { CreateClientUseCase } from 'src/domain/use-cases/client/create-client.use-case';
-import { DeleteClientUseCase } from 'src/domain/use-cases/client/delete-client.use-case';
-import { FindAllClientsUseCase } from 'src/domain/use-cases/client/find-all-clients.use-case';
-import { FindClientUseCase } from 'src/domain/use-cases/client/find-client.use-case';
-import { UpdateClientUseCase } from 'src/domain/use-cases/client/update-client.use-case';
+import { CreateClientUseCase } from '@lib/domain/use-cases/client/create-client';
+import { DeleteClientUseCase } from '@lib/domain/use-cases/client/delete-client';
+import { FindAllClientsUseCase } from '@lib/domain/use-cases/client/find-all-clients';
+import { FindClientUseCase } from '@lib/domain/use-cases/client/find-client';
+import { UpdateClientUseCase } from '@lib/domain/use-cases/client/update-client';
 
 import { CreateClientDtoMapper } from './adapter/create-client.mapper';
 import { UpdateClientDtoMapper } from './adapter/update-client.mapper';

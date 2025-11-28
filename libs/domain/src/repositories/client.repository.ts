@@ -1,21 +1,29 @@
-import type { Client } from 'src/entities/client.entity';
+import type { Client, CreateClient, UpdateClient } from 'src/entities/client';
 
-export type FindClientByIdInput = { id: Client['id'] };
-export type CreateClientInput = { client: Client };
-export type UpdateClientInput = {
-  clientData: Omit<Partial<Client>, 'id'>;
+type CreateClientInput = { client: CreateClient };
+
+type FindClientByIdInput = { id: Client['id'] };
+
+type FindAllClientsInput = {};
+
+type UpdateClientInput = {
+  clientData: UpdateClient;
   id: Client['id'];
 };
-export type DeleteClientInput = { id: Client['id'] };
 
-export interface ClientRepository {
-  create({ client }: CreateClientInput): Promise<Client>;
+type DeleteClientByIdInput = { id: Client['id'] };
 
-  delete({ id }: DeleteClientInput): Promise<boolean>;
+export abstract class ClientRepository {
+  abstract findById({ id }: FindClientByIdInput): Promise<Client | null>;
 
-  findAll(): Promise<Client[]>;
+  abstract findAll({}): Promise<Client[]>;
 
-  findById(id: string): Promise<Client | null>;
+  abstract create({ client }: CreateClientInput): Promise<Client>;
 
-  update({ id, clientData }: UpdateClientInput): Promise<Client | null>;
+  abstract update({
+    id,
+    clientData,
+  }: UpdateClientInput): Promise<Client | null>;
+
+  abstract deleteById({ id }: DeleteClientByIdInput): Promise<boolean>;
 }

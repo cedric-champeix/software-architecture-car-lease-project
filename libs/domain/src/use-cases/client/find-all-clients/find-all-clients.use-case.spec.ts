@@ -1,4 +1,4 @@
-import { Client } from 'src/entities/client.entity';
+import { Client } from 'src/entities/client/client.entity';
 import type { ClientRepository } from 'src/repositories/client.repository';
 
 import { FindAllClientsUseCase } from '.';
@@ -10,7 +10,7 @@ describe('FindAllClientsUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      delete: jest.fn(),
+      deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
@@ -19,16 +19,27 @@ describe('FindAllClientsUseCase', () => {
   });
 
   it('should return all clients', async () => {
+    const clientData = {
+      address: '123 Main St',
+      birthDate: new Date('1990-01-01'),
+      driverLicenseNumber: '12345',
+      email: 'john.doe@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      phoneNumber: '123456789',
+    };
+
     const clients = [
       new Client({
-        address: '123 Main St',
-        birthDate: new Date('1990-01-01'),
-        driverLicenseNumber: '12345',
-        firstName: 'John',
+        ...clientData,
         id: '1',
-        lastName: 'Doe',
+      }),
+      new Client({
+        ...clientData,
+        id: '2',
       }),
     ];
+
     (clientRepository.findAll as jest.Mock).mockResolvedValue(clients);
 
     const result = await findAllClientsUseCase.execute();

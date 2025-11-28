@@ -1,25 +1,44 @@
-import { ContractStatus } from 'src/entities/contract.entity';
-import { type Vehicle, VehicleStatus } from 'src/entities/vehicle.entity';
+import { UseCase } from 'src/common/use-cases';
+import { ONE_YEAR_IN_MS } from 'src/constants/constant';
+import { UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
+import type { Vehicle } from 'src/entities/vehicle';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 
-export class CancelContractsForVehicleInMaintenanceUseCase {
-  constructor(private readonly contractRepository: ContractRepository) {}
+export const MAINTENANCE_DATE_RANGE = new Date(
+  new Date().getTime() + ONE_YEAR_IN_MS,
+);
+
+export class CancelContractsForVehicleInMaintenanceUseCase extends UseCase<
+  Vehicle,
+  void
+> {
+  constructor(private readonly contractRepository: ContractRepository) {
+    super();
+  }
 
   async execute(vehicle: Vehicle): Promise<void> {
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
       const contracts =
-        await this.contractRepository.findByVehicleIdAndDateRange(
-          vehicle.id,
-          new Date(),
-          new Date(new Date().getFullYear() + 10, 1, 1), // Far future date
-        );
+        await this.contractRepository.findByVehicleIdAndDateRange({
+          endDate: MAINTENANCE_DATE_RANGE,
+          startDate: new Date(),
+          vehicleId: vehicle.id,
+        });
 
-      for (const contract of contracts) {
+      contracts.forEach(async (contract) => {
         if (contract.status === ContractStatus.PENDING) {
-          contract.status = ContractStatus.CANCELED;
-          await this.contractRepository.save(contract);
+          const updatedContract = new UpdateContract({
+            status: ContractStatus.CANCELLED,
+          });
+
+          await this.contractRepository.update({
+            id: contract.id,
+            contract: updatedContract,
+          });
         }
-      }
+      });
     }
   }
 }

@@ -1,15 +1,20 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Contract } from 'src/entities/contract.entity';
-import { ContractRepository } from 'src/repositories/contract.repository';
+import { UseCase } from 'src/common/use-cases';
+import type { Contract } from 'src/entities/contract/contract.entity';
+import type { ContractRepository } from 'src/repositories/contract.repository';
 
-@Injectable()
-export class FindContractUseCase {
-  constructor(
-    @Inject('ContractRepository')
-    private readonly contractRepository: ContractRepository,
-  ) {}
+export type FindContractUseCaseInput = {
+  id: string;
+};
 
-  async execute(id: string): Promise<Contract | null> {
-    return this.contractRepository.findById(id);
+export class FindContractUseCase extends UseCase<
+  FindContractUseCaseInput,
+  Contract | null
+> {
+  constructor(private readonly contractRepository: ContractRepository) {
+    super();
+  }
+
+  async execute({ id }: FindContractUseCaseInput): Promise<Contract | null> {
+    return this.contractRepository.findById({ id });
   }
 }

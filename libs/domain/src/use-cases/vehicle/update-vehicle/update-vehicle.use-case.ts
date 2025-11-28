@@ -1,35 +1,46 @@
-import type { Vehicle } from 'src/entities/vehicle.entity';
-import { VehicleStatus } from 'src/entities/vehicle.entity';
+import { UseCase } from 'src/common/use-cases';
+import type { FuelType, MotorizationType } from 'src/entities/vehicle/enum';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import type { Vehicle } from 'src/entities/vehicle/vehicle.entity';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 import type { CancelContractsForVehicleInMaintenanceUseCase } from 'src/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
 
-export class UpdateVehicleUseCase {
+export type UpdateVehicleUseCaseInput = {
+  id: string;
+  input: {
+    acquiredDate?: Date;
+    color?: string;
+    fuelType?: FuelType;
+    licensePlate?: string;
+    make?: string;
+    model?: string;
+    motorizationType?: MotorizationType;
+    status?: VehicleStatus;
+  };
+};
+
+export class UpdateVehicleUseCase extends UseCase<
+  UpdateVehicleUseCaseInput,
+  Vehicle
+> {
   constructor(
     private readonly vehicleRepository: VehicleRepository,
     private readonly cancelContractsForVehicleInMaintenanceUseCase: CancelContractsForVehicleInMaintenanceUseCase,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(
-    id: string,
-    input: {
-      acquiredDate?: Date;
-      color?: string;
-      fuelType?: any;
-      licensePlate?: string;
-      make?: string;
-      model?: string;
-      status?: VehicleStatus;
-    },
-  ): Promise<Vehicle> {
-    const vehicle = await this.vehicleRepository.findById(id);
+  async execute({ id, input }: UpdateVehicleUseCaseInput): Promise<Vehicle> {
+    const vehicle = await this.vehicleRepository.findById({ id });
+
     if (!vehicle) {
       throw new Error('Vehicle not found.');
     }
 
     if (input.licensePlate && input.licensePlate !== vehicle.licensePlate) {
-      const existingVehicle = await this.vehicleRepository.findByLicensePlate(
-        input.licensePlate,
-      );
+      const existingVehicle = await this.vehicleRepository.findByLicensePlate({
+        licensePlate: input.licensePlate,
+      });
       if (existingVehicle) {
         throw new Error('Vehicle with this license plate already exists.');
       }
@@ -42,6 +53,9 @@ export class UpdateVehicleUseCase {
       await this.cancelContractsForVehicleInMaintenanceUseCase.execute(vehicle);
     }
 
-    return this.vehicleRepository.save(vehicle);
+    return this.vehicleRepository.update({
+      id,
+      vehicle,
+    });
   }
 }

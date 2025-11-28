@@ -1,28 +1,40 @@
-import { Contract, ContractStatus } from 'src/entities/contract.entity';
-import { VehicleStatus } from 'src/entities/vehicle.entity';
+import { UseCase } from 'src/common/use-cases';
+import type { Contract } from 'src/entities/contract/contract.entity';
+import { CreateContract } from 'src/entities/contract/create-contract.entity';
+import { ContractStatus } from 'src/entities/contract/enum';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
 import type { ClientRepository } from 'src/repositories/client.repository';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
-export class CreateContractUseCase {
+export type CreateContractUseCaseInput = {
+  clientId: string;
+  endDate: Date;
+  startDate: Date;
+  vehicleId: string;
+};
+
+export class CreateContractUseCase extends UseCase<
+  CreateContractUseCaseInput,
+  Contract
+> {
   constructor(
     private readonly contractRepository: ContractRepository,
     private readonly clientRepository: ClientRepository,
     private readonly vehicleRepository: VehicleRepository,
-  ) {}
+  ) {
+    super();
+  }
 
-  async execute(input: {
-    clientId: string;
-    endDate: Date;
-    startDate: Date;
-    vehicleId: string;
-  }): Promise<Contract> {
-    const client = await this.clientRepository.findById(input.clientId);
+  async execute(input: CreateContractUseCaseInput): Promise<Contract> {
+    const client = await this.clientRepository.findById({ id: input.clientId });
     if (!client) {
       throw new Error('Client not found.');
     }
 
-    const vehicle = await this.vehicleRepository.findById(input.vehicleId);
+    const vehicle = await this.vehicleRepository.findById({
+      id: input.vehicleId,
+    });
     if (!vehicle) {
       throw new Error('Vehicle not found.');
     }
@@ -32,21 +44,21 @@ export class CreateContractUseCase {
     }
 
     const overlappingContracts =
-      await this.contractRepository.findByVehicleIdAndDateRange(
-        input.vehicleId,
-        input.startDate,
-        input.endDate,
-      );
+      await this.contractRepository.findByVehicleIdAndDateRange({
+        endDate: input.endDate,
+        startDate: input.startDate,
+        vehicleId: input.vehicleId,
+      });
 
     if (overlappingContracts.length > 0) {
       throw new Error('Vehicle is already leased for the selected period.');
     }
 
-    const contract = new Contract({
+    const contract = new CreateContract({
       ...input,
       status: ContractStatus.PENDING,
     });
 
-    return this.contractRepository.save(contract);
+    return this.contractRepository.create({ contract });
   }
 }

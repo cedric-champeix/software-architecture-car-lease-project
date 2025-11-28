@@ -1,16 +1,23 @@
-import { Client } from 'src/entities/client.entity';
-import { Contract, ContractStatus } from 'src/entities/contract.entity';
+import { Client } from 'src/entities/client/client.entity';
+import { Contract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
+import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
 import {
   FuelType,
   MotorizationType,
-  Vehicle,
   VehicleStatus,
-} from 'src/entities/vehicle.entity';
+} from 'src/entities/vehicle/enum';
 import type { ClientRepository } from 'src/repositories/client.repository';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
 import { CreateContractUseCase } from '.';
+import { CLIENT_FIXTURE } from 'src/test/fixtures/client/client.fixture';
+import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
+import {
+  CONTRACT_FIXTURE,
+  CONTRACT_FIXTURE_NO_ID,
+} from 'src/test/fixtures/contract/contract.fixture';
 
 describe('CreateContractUseCase', () => {
   let createContractUseCase: CreateContractUseCase;
@@ -24,18 +31,20 @@ describe('CreateContractUseCase', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     };
     vehicleRepository = {
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     };
     clientRepository = {
       create: jest.fn(),
-      delete: jest.fn(),
+      deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
@@ -49,49 +58,56 @@ describe('CreateContractUseCase', () => {
 
   it('should create a new contract', async () => {
     const contractData = {
-      clientId: '1',
-      endDate: new Date('2025-12-10'),
-      startDate: new Date('2025-12-01'),
-      vehicleId: '1',
+      clientId: 'client-1',
+      vehicleId: 'vehicle-1',
+      startDate: new Date('2020-01-01'),
+      endDate: new Date('2020-01-01'),
     };
-    const client = new Client({ id: '1' });
-    const vehicle = new Vehicle({
-      acquiredDate: new Date('2020-01-01'),
-      color: 'Blue',
-      fuelType: FuelType.PETROL,
-      id: '1',
-      licensePlate: 'ABC-1234',
-      make: 'Toyota',
-      model: 'Corolla',
-      motorizationType: MotorizationType.INTERNAL_COMBUSTION,
-      status: VehicleStatus.AVAILABLE,
-    });
+
+    const client = new Client({ ...CLIENT_FIXTURE });
+
+    const vehicle = new Vehicle({ ...VEHICLE_FIXTURE });
+
     const contract = new Contract({
+      ...CONTRACT_FIXTURE,
       ...contractData,
       status: ContractStatus.PENDING,
     });
 
     (clientRepository.findById as jest.Mock).mockResolvedValue(client);
+
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
+
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue([]);
-    (contractRepository.save as jest.Mock).mockResolvedValue(contract);
+
+    (contractRepository.create as jest.Mock).mockResolvedValue(contract);
 
     const result = await createContractUseCase.execute(contractData);
 
-    expect(clientRepository.findById).toHaveBeenCalledWith(
-      contractData.clientId,
-    );
-    expect(vehicleRepository.findById).toHaveBeenCalledWith(
-      contractData.vehicleId,
-    );
+    expect(clientRepository.findById).toHaveBeenCalledWith({
+      id: contractData.clientId,
+    });
+
+    expect(vehicleRepository.findById).toHaveBeenCalledWith({
+      id: contractData.vehicleId,
+    });
+
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
-      contractData.vehicleId,
-      contractData.startDate,
-      contractData.endDate,
+      {
+        vehicleId: contractData.vehicleId,
+        startDate: contractData.startDate,
+        endDate: contractData.endDate,
+      },
     );
-    expect(contractRepository.save).toHaveBeenCalledWith(expect.any(Contract));
+
+    expect(contractRepository.create).toHaveBeenCalledWith({
+      ...CONTRACT_FIXTURE_NO_ID,
+      ...contractData,
+      status: ContractStatus.PENDING,
+    });
+
     expect(result).toEqual(contract);
   });
 
@@ -116,9 +132,10 @@ describe('CreateContractUseCase', () => {
       startDate: new Date('2025-12-01'),
       vehicleId: '1',
     };
-    (clientRepository.findById as jest.Mock).mockResolvedValue(
-      new Client({ id: '1' }),
-    );
+
+    const client = new Client({ ...CLIENT_FIXTURE });
+
+    (clientRepository.findById as jest.Mock).mockResolvedValue(client);
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(null);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
@@ -133,6 +150,7 @@ describe('CreateContractUseCase', () => {
       startDate: new Date('2025-12-01'),
       vehicleId: '1',
     };
+
     const vehicle = new Vehicle({
       acquiredDate: new Date('2020-01-01'),
       color: 'Blue',
@@ -144,10 +162,13 @@ describe('CreateContractUseCase', () => {
       motorizationType: MotorizationType.INTERNAL_COMBUSTION,
       status: VehicleStatus.MAINTENANCE,
     });
-    (clientRepository.findById as jest.Mock).mockResolvedValue(
-      new Client({ id: '1' }),
-    );
+
+    const client = new Client({ ...CLIENT_FIXTURE });
+
+    (clientRepository.findById as jest.Mock).mockResolvedValue(client);
+
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
+
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue([]);
@@ -160,10 +181,11 @@ describe('CreateContractUseCase', () => {
   it('should throw an error if vehicle is already leased during the period', async () => {
     const contractData = {
       clientId: '1',
-      endDate: new Date('2025-12-10'),
       startDate: new Date('2025-12-01'),
+      endDate: new Date('2025-12-10'),
       vehicleId: '1',
     };
+
     const vehicle = new Vehicle({
       acquiredDate: new Date('2020-01-01'),
       color: 'Blue',
@@ -175,11 +197,20 @@ describe('CreateContractUseCase', () => {
       motorizationType: MotorizationType.INTERNAL_COMBUSTION,
       status: VehicleStatus.AVAILABLE,
     });
-    (clientRepository.findById as jest.Mock).mockResolvedValue(new Client());
+
+    const client = new Client({ ...CLIENT_FIXTURE });
+
+    const contract = new Contract({
+      ...CONTRACT_FIXTURE,
+      ...contractData,
+      status: ContractStatus.PENDING,
+    });
+
+    (clientRepository.findById as jest.Mock).mockResolvedValue(client);
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
-    ).mockResolvedValue([new Contract()]);
+    ).mockResolvedValue([contract]);
 
     await expect(createContractUseCase.execute(contractData)).rejects.toThrow(
       'Vehicle is already leased for the selected period.',

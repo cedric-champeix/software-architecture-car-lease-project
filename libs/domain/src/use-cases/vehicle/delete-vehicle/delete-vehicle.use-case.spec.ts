@@ -1,6 +1,7 @@
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
 import { DeleteVehicleUseCase } from '.';
+import type { DeleteVehicleUseCaseInput } from '.';
 
 describe('DeleteVehicleUseCase', () => {
   let deleteVehicleUseCase: DeleteVehicleUseCase;
@@ -8,21 +9,25 @@ describe('DeleteVehicleUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      save: jest.fn(),
+      update: jest.fn(),
     };
     deleteVehicleUseCase = new DeleteVehicleUseCase(vehicleRepository);
   });
 
   it('should delete a vehicle', async () => {
-    const vehicleId = '123';
-    (vehicleRepository.deleteById as jest.Mock).mockResolvedValue(undefined);
+    const vehicleId: DeleteVehicleUseCaseInput = { id: '123' };
 
-    await deleteVehicleUseCase.execute(vehicleId);
+    (vehicleRepository.deleteById as jest.Mock).mockResolvedValue(true);
+
+    const result = await deleteVehicleUseCase.execute(vehicleId);
 
     expect(vehicleRepository.deleteById).toHaveBeenCalledWith(vehicleId);
+
+    expect(result).toBe(true);
   });
 });

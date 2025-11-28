@@ -1,7 +1,18 @@
-import { Client } from 'src/entities/client.entity';
+import { Client } from 'src/entities/client/client.entity';
 import type { ClientRepository } from 'src/repositories/client.repository';
 
 import { UpdateClientUseCase } from '.';
+
+const clientMock = new Client({
+  id: 'client-1',
+  address: '123 Main St',
+  birthDate: new Date('1990-01-01'),
+  driverLicenseNumber: '12345',
+  email: 'jhon.doe@email.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  phoneNumber: '+1234567890',
+});
 
 describe('UpdateClientUseCase', () => {
   let updateClientUseCase: UpdateClientUseCase;
@@ -10,7 +21,7 @@ describe('UpdateClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      delete: jest.fn(),
+      deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
@@ -19,26 +30,31 @@ describe('UpdateClientUseCase', () => {
   });
 
   it('should update a client', async () => {
-    const clientId = '123';
+    const id = clientMock.id;
     const clientData = {
-      firstName: 'John',
-      lastName: 'Doe',
+      email: 'new.email@email.com',
+      phoneNumber: '+1234567890',
+      driverLicenseNumber: '123456789',
+      address: '123 Main St',
     };
+
     const client = new Client({
-      id: clientId,
+      ...clientMock,
       ...clientData,
     });
+
     (clientRepository.update as jest.Mock).mockResolvedValue(client);
 
     const result = await updateClientUseCase.execute({
       clientData,
-      id: clientId,
+      id,
     });
 
     expect(clientRepository.update).toHaveBeenCalledWith({
       clientData,
-      id: clientId,
+      id,
     });
+
     expect(result).toEqual(client);
   });
 });

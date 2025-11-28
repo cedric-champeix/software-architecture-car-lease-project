@@ -1,7 +1,9 @@
-import { Contract, ContractStatus } from 'src/entities/contract.entity';
+import { Contract, UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 
 import { HandleOverdueContractsUseCase } from '.';
+import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
 
 describe('HandleOverdueContractsUseCase', () => {
   let useCase: HandleOverdueContractsUseCase;
@@ -13,74 +15,88 @@ describe('HandleOverdueContractsUseCase', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     };
     useCase = new HandleOverdueContractsUseCase(contractRepository);
   });
 
   it('should mark overdue contracts as OVERDUE', async () => {
     const now = new Date();
-    const contracts = [
-      new Contract({
-        endDate: new Date(now.getTime() - 1000),
-        id: '1',
-        status: ContractStatus.ACTIVE,
-        vehicleId: '1',
-      }),
-      new Contract({
-        endDate: new Date(now.getTime() + 1000),
-        id: '2',
-        status: ContractStatus.ACTIVE,
-        vehicleId: '2',
-      }),
-    ];
+
+    const contractId1 = '1';
+    const contractId2 = '2';
+
+    const contract1 = new Contract({
+      ...CONTRACT_FIXTURE,
+      id: contractId1,
+      startDate: new Date(now.getTime() - 1000),
+      endDate: new Date(now.getTime() - 1000),
+    });
+    const contract2 = new Contract({
+      ...CONTRACT_FIXTURE,
+      id: contractId2,
+      startDate: new Date(now.getTime() + 1000),
+      endDate: new Date(now.getTime() + 1000),
+    });
+
+    const contracts = [contract1, contract2];
+
     (contractRepository.findAll as jest.Mock).mockResolvedValue(contracts);
+
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue([]);
 
     await useCase.execute();
 
-    expect(contractRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: '1', status: ContractStatus.OVERDUE }),
-    );
-    expect(contractRepository.save).not.toHaveBeenCalledWith(
-      expect.objectContaining({ id: '2' }),
-    );
+    expect(contractRepository.update).toHaveBeenCalledWith({
+      id: contractId1,
+      contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+    });
+
+    expect(contractRepository.update).not.toHaveBeenCalledWith({
+      id: contractId2,
+      contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+    });
   });
 
   it('should cancel next contract if affected by overdue contract', async () => {
     const now = new Date();
+
     const overdueContract = new Contract({
+      ...CONTRACT_FIXTURE,
+      startDate: new Date(now.getTime() - 2000),
       endDate: new Date(now.getTime() - 1000),
-      id: '1',
-      status: ContractStatus.ACTIVE,
-      vehicleId: '1',
     });
+
     const nextContract = new Contract({
-      id: '2',
-      startDate: new Date(now.getTime() - 500),
-      status: ContractStatus.PENDING,
-      vehicleId: '1',
+      ...CONTRACT_FIXTURE,
+      id: 'SomeId',
+      startDate: new Date(now.getTime()),
+      endDate: new Date(now.getTime() + 1000),
     });
 
     (contractRepository.findAll as jest.Mock).mockResolvedValue([
       overdueContract,
     ]);
+
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue([nextContract]);
 
     await useCase.execute();
 
-    expect(contractRepository.save).toHaveBeenCalledTimes(2);
-    expect(contractRepository.save).toHaveBeenNthCalledWith(
-      1,
-      expect.objectContaining({ id: '1', status: ContractStatus.OVERDUE }),
-    );
-    expect(contractRepository.save).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ id: '2', status: ContractStatus.CANCELED }),
-    );
+    expect(contractRepository.update).toHaveBeenCalledTimes(2);
+
+    expect(contractRepository.update).toHaveBeenCalledWith({
+      id: overdueContract.id,
+      contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+    });
+
+    expect(contractRepository.update).toHaveBeenCalledWith({
+      id: nextContract.id,
+      contract: new UpdateContract({ status: ContractStatus.CANCELLED }),
+    });
   });
 });

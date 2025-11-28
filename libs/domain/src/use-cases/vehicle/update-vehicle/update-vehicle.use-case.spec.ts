@@ -1,24 +1,9 @@
-import {
-  FuelType,
-  MotorizationType,
-  Vehicle,
-  VehicleStatus,
-} from 'src/entities/vehicle.entity';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
 import type { CancelContractsForVehicleInMaintenanceUseCase } from 'src/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
 import { UpdateVehicleUseCase } from 'src/use-cases/vehicle/update-vehicle';
-
-const vehicleMock: Vehicle = new Vehicle({
-  acquiredDate: new Date('2020-01-01'),
-  color: 'Blue',
-  fuelType: FuelType.PETROL,
-  id: 'vehicle-1',
-  licensePlate: 'ABC-1234',
-  make: 'Toyota',
-  model: 'Corolla',
-  motorizationType: MotorizationType.INTERNAL_COMBUSTION,
-  status: VehicleStatus.AVAILABLE,
-});
 
 describe('UpdateVehicleUseCase', () => {
   let updateVehicleUseCase: UpdateVehicleUseCase;
@@ -27,11 +12,12 @@ describe('UpdateVehicleUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      save: jest.fn(),
+      update: jest.fn(),
     };
     cancelContractsForVehicleInMaintenanceUseCase = {
       execute: jest.fn(),
@@ -43,43 +29,56 @@ describe('UpdateVehicleUseCase', () => {
   });
 
   it('should update a vehicle', async () => {
-    const vehicleId = '123';
+    const vehicleId = { id: '123' };
+
     const vehicleData = {
       color: 'red',
       model: 'Camry',
     };
-    const updatedVehicle = new Vehicle({ ...vehicleMock, ...vehicleData });
 
-    (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicleMock);
-    (vehicleRepository.save as jest.Mock).mockResolvedValue(updatedVehicle);
+    const updatedVehicle = new Vehicle({ ...VEHICLE_FIXTURE, ...vehicleData });
 
-    const result = await updateVehicleUseCase.execute(vehicleId, vehicleData);
+    (vehicleRepository.findById as jest.Mock).mockResolvedValue(
+      VEHICLE_FIXTURE,
+    );
+    (vehicleRepository.update as jest.Mock).mockResolvedValue(updatedVehicle);
+
+    const result = await updateVehicleUseCase.execute({
+      id: vehicleId.id,
+      input: vehicleData,
+    });
 
     expect(vehicleRepository.findById).toHaveBeenCalledWith(vehicleId);
-    expect(vehicleRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining(vehicleData),
-    );
+
+    expect(vehicleRepository.update).toHaveBeenCalledWith({
+      id: vehicleId.id,
+      vehicle: { ...VEHICLE_FIXTURE, ...vehicleData },
+    });
+
     expect(result).toEqual(updatedVehicle);
   });
 
   it('should cancel contracts if vehicle status is maintenance', async () => {
-    const vehicleId = '123';
+    const vehicleId = { id: '123' };
     const vehicleData = {
       status: VehicleStatus.MAINTENANCE,
     };
     const vehicle = new Vehicle({
-      ...vehicleMock,
-      id: vehicleId,
+      ...VEHICLE_FIXTURE,
+      id: vehicleId.id,
       status: VehicleStatus.AVAILABLE,
     });
 
     (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
-    (vehicleRepository.save as jest.Mock).mockResolvedValue(vehicle);
+    (vehicleRepository.update as jest.Mock).mockResolvedValue(vehicle);
 
-    await updateVehicleUseCase.execute(vehicleId, vehicleData);
+    await updateVehicleUseCase.execute({
+      id: vehicleId.id,
+      input: vehicleData,
+    });
 
     expect(
       cancelContractsForVehicleInMaintenanceUseCase.execute,
-    ).toHaveBeenCalledWith(expect.objectContaining(vehicleData));
+    ).toHaveBeenCalledWith(vehicle);
   });
 });

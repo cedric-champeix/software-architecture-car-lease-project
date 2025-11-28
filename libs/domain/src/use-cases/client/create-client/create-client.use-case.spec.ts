@@ -1,7 +1,18 @@
-import { Client } from 'src/entities/client.entity';
+import { Client } from 'src/entities/client/client.entity';
 import type { ClientRepository } from 'src/repositories/client.repository';
 
 import { CreateClientUseCase } from '.';
+
+const clientMock = new Client({
+  id: '1',
+  address: '123 Main St',
+  birthDate: new Date('1990-01-01'),
+  driverLicenseNumber: '12345',
+  email: 'jhon.doe@email.com',
+  firstName: 'John',
+  lastName: 'Doe',
+  phoneNumber: '+1234567890',
+});
 
 describe('CreateClientUseCase', () => {
   let createClientUseCase: CreateClientUseCase;
@@ -10,7 +21,7 @@ describe('CreateClientUseCase', () => {
   beforeEach(() => {
     clientRepository = {
       create: jest.fn(),
-      delete: jest.fn(),
+      deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       update: jest.fn(),
@@ -26,39 +37,23 @@ describe('CreateClientUseCase', () => {
       email: 'jhon.doe@email.com',
       firstName: 'John',
       lastName: 'Doe',
+      phoneNumber: '+1234567890',
     };
-    const client = new Client(clientData);
+
+    const client = new Client({ ...clientData, id: '1' });
+
     (clientRepository.create as jest.Mock).mockResolvedValue(client);
 
-    const {
-      email,
-      firstName,
-      lastName,
-      address,
-      birthDate,
-      driverLicenseNumber,
-    } = clientData;
-
     const result = await createClientUseCase.execute({
-      address,
-      birthDate,
-      driverLicenseNumber,
-      email,
-      firstName,
-      lastName,
+      ...clientData,
     });
 
     expect(clientRepository.create).toHaveBeenCalledWith({
       client: {
-        address,
-        birthDate,
-        driverLicenseNumber,
-        email,
-        firstName,
-        id: '',
-        lastName,
+        ...clientData,
       },
     });
+
     expect(result).toEqual(client);
   });
 });

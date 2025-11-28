@@ -1,13 +1,39 @@
-import type { Contract } from 'src/entities/contract.entity';
+import type {
+  Contract,
+  CreateContract,
+  UpdateContract,
+} from 'src/entities/contract';
+
+type FindContractByIdInput = { id: Contract['id'] };
+
+type FindAllContractInput = {};
+
+type FindContractByVehicleIdAndDateRangeInput = {
+  vehicleId: Contract['vehicleId'];
+  endDate?: Date;
+  startDate?: Date;
+};
+
+type CreateContractInput = { contract: CreateContract };
+
+type UpdateContractInput = { contract: UpdateContract; id: Contract['id'] };
+
+type DeleteContractInput = { id: Contract['id'] };
 
 export abstract class ContractRepository {
-  abstract findById(id: string): Promise<Contract | null>;
-  abstract findAll(): Promise<Contract[]>;
-  abstract save(contract: Contract): Promise<Contract>;
-  abstract deleteById(id: string): Promise<void>;
-  abstract findByVehicleIdAndDateRange(
-    vehicleId: string,
-    startDate: Date,
-    endDate: Date,
-  ): Promise<Contract[]>;
+  abstract findById({ id }: FindContractByIdInput): Promise<Contract | null>;
+
+  abstract findAll({}: FindAllContractInput): Promise<Contract[]>;
+
+  abstract findByVehicleIdAndDateRange({
+    vehicleId,
+    startDate,
+    endDate,
+  }: FindContractByVehicleIdAndDateRangeInput): Promise<Contract[]>;
+
+  abstract create({ contract }: CreateContractInput): Promise<Contract>;
+
+  abstract update({ id, contract }: UpdateContractInput): Promise<Contract>;
+
+  abstract deleteById({ id }: DeleteContractInput): Promise<boolean>;
 }

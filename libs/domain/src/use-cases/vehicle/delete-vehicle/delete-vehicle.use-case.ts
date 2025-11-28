@@ -1,9 +1,19 @@
+import { UseCase } from 'src/common/use-cases';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
-export class DeleteVehicleUseCase {
-  constructor(private readonly vehicleRepository: VehicleRepository) {}
+export type DeleteVehicleUseCaseInput = {
+  id: string;
+};
 
-  async execute(id: string): Promise<void> {
-    return this.vehicleRepository.deleteById(id);
+export class DeleteVehicleUseCase extends UseCase<
+  DeleteVehicleUseCaseInput,
+  boolean
+> {
+  constructor(private readonly vehicleRepository: VehicleRepository) {
+    super();
+  }
+
+  async execute({ id }: DeleteVehicleUseCaseInput): Promise<boolean> {
+    return this.vehicleRepository.deleteById({ id });
   }
 }

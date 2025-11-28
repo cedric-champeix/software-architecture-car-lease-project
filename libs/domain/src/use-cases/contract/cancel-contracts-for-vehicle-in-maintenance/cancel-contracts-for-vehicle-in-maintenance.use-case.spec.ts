@@ -1,11 +1,19 @@
-import { Contract, ContractStatus } from 'src/entities/contract.entity';
-import { Vehicle, VehicleStatus } from 'src/entities/vehicle.entity';
+import { Contract, UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
+import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
+import {
+  FuelType,
+  MotorizationType,
+  VehicleStatus,
+} from 'src/entities/vehicle/enum';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 
 import { CancelContractsForVehicleInMaintenanceUseCase } from '.';
+import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
+import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
 
 describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
-  let useCase: CancelContractsForVehicleInMaintenanceUseCase;
+  let cancelContractUseCase: CancelContractsForVehicleInMaintenanceUseCase;
   let contractRepository: ContractRepository;
 
   beforeEach(() => {
@@ -14,52 +22,82 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     };
-    useCase = new CancelContractsForVehicleInMaintenanceUseCase(
+
+    cancelContractUseCase = new CancelContractsForVehicleInMaintenanceUseCase(
       contractRepository,
     );
   });
 
   it('should cancel pending contracts for a vehicle in maintenance', async () => {
     const vehicle = new Vehicle({
-      id: '1',
+      ...VEHICLE_FIXTURE,
       status: VehicleStatus.MAINTENANCE,
-    } as any);
-    const contracts = [
-      new Contract({ id: '1', status: ContractStatus.PENDING }),
-      new Contract({ id: '2', status: ContractStatus.ACTIVE }),
-    ];
+    });
+
+    const contract1 = new Contract({
+      ...CONTRACT_FIXTURE,
+      id: '1',
+      startDate: new Date(new Date().getTime() + 10),
+      endDate: new Date(new Date().getTime() + 20),
+      status: ContractStatus.PENDING,
+      vehicleId: vehicle.id,
+    });
+
+    const contract2 = new Contract({
+      ...CONTRACT_FIXTURE,
+      id: '2',
+      startDate: new Date(new Date().getTime() - 20),
+      endDate: new Date(new Date().getTime() - 10),
+      status: ContractStatus.ACTIVE,
+      vehicleId: vehicle.id,
+    });
+
+    const contracts = [contract1, contract2];
+
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue(contracts);
 
-    await useCase.execute(vehicle);
+    await cancelContractUseCase.execute(vehicle);
 
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
-      vehicle.id,
-      expect.any(Date),
-      expect.any(Date),
+      {
+        vehicleId: vehicle.id,
+        startDate: expect.any(Date),
+        endDate: expect.any(Date),
+      },
     );
-    expect(contractRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ id: '1', status: ContractStatus.CANCELED }),
-    );
-    expect(contractRepository.save).not.toHaveBeenCalledWith(
-      expect.objectContaining({ id: '2' }),
-    );
+
+    expect(contractRepository.update).toHaveBeenCalledWith({
+      id: '1',
+      contract: new UpdateContract({
+        status: ContractStatus.CANCELLED,
+      }),
+    });
+
+    expect(contractRepository.update).not.toHaveBeenCalledWith({
+      id: '2',
+      contract: new UpdateContract({
+        status: ContractStatus.CANCELLED,
+      }),
+    });
   });
 
   it('should not do anything if vehicle is not in maintenance', async () => {
     const vehicle = new Vehicle({
-      id: '1',
+      ...VEHICLE_FIXTURE,
       status: VehicleStatus.AVAILABLE,
-    } as any);
+    });
 
-    await useCase.execute(vehicle);
+    await cancelContractUseCase.execute(vehicle);
 
     expect(
       contractRepository.findByVehicleIdAndDateRange,
     ).not.toHaveBeenCalled();
-    expect(contractRepository.save).not.toHaveBeenCalled();
+
+    expect(contractRepository.update).not.toHaveBeenCalled();
   });
 });

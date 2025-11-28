@@ -8,7 +8,7 @@ export class Client {
   public driverLicenseNumber: string;
   public address: string;
 
-  constructor(init?: Partial<Client>) {
+  constructor(init: Client) {
     Object.assign(this, init);
   }
 }

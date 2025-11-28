@@ -1,24 +1,18 @@
 import {
   FuelType,
   MotorizationType,
-  Vehicle,
   VehicleStatus,
-} from 'src/entities/vehicle.entity';
+} from 'src/entities/vehicle/enum';
+import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
 import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
+import {
+  VEHICLE_FIXTURE,
+  VEHICLE_FIXTURE_NO_ID,
+} from 'src/test/fixtures/vehicle/vehicle.fixture';
+import type { CreateVehicleUseCaseInput } from '.';
 import { CreateVehicleUseCase } from '.';
-
-const vehicleMock: Vehicle = new Vehicle({
-  acquiredDate: new Date('2020-01-01'),
-  color: 'Blue',
-  fuelType: FuelType.PETROL,
-  id: 'vehicle-1',
-  licensePlate: 'ABC-1234',
-  make: 'Toyota',
-  model: 'Corolla',
-  motorizationType: MotorizationType.INTERNAL_COMBUSTION,
-  status: VehicleStatus.AVAILABLE,
-});
+import { CreateVehicle } from 'src/entities/vehicle';
 
 describe('CreateVehicleUseCase', () => {
   let createVehicleUseCase: CreateVehicleUseCase;
@@ -30,36 +24,43 @@ describe('CreateVehicleUseCase', () => {
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
     };
     createVehicleUseCase = new CreateVehicleUseCase(vehicleRepository);
   });
 
   it('should create a new vehicle', async () => {
-    const vehicleData = {
-      acquiredDate: new Date(),
-      color: 'blue',
-      fuelType: FuelType.PETROL,
-      licensePlate: 'ABC-123',
-      make: 'Toyota',
-      model: 'Corolla',
+    const vehicleData: CreateVehicleUseCaseInput = {
+      acquiredDate: VEHICLE_FIXTURE.acquiredDate,
+      color: VEHICLE_FIXTURE.color,
+      fuelType: VEHICLE_FIXTURE.fuelType,
+      licensePlate: VEHICLE_FIXTURE.licensePlate,
+      make: VEHICLE_FIXTURE.make,
+      model: VEHICLE_FIXTURE.model,
+      motorizationType: VEHICLE_FIXTURE.motorizationType,
     };
 
     const vehicle = new Vehicle({
-      ...vehicleMock,
+      ...VEHICLE_FIXTURE,
     });
 
     (vehicleRepository.findByLicensePlate as jest.Mock).mockResolvedValue(null);
 
-    (vehicleRepository.save as jest.Mock).mockResolvedValue(vehicle);
+    (vehicleRepository.create as jest.Mock).mockResolvedValue(vehicle);
 
     const result = await createVehicleUseCase.execute(vehicleData);
 
-    expect(vehicleRepository.findByLicensePlate).toHaveBeenCalledWith(
-      vehicleData.licensePlate,
-    );
+    expect(vehicleRepository.findByLicensePlate).toHaveBeenCalledWith({
+      licensePlate: vehicleData.licensePlate,
+    });
 
-    expect(vehicleRepository.save).toHaveBeenCalledWith(expect.any(Vehicle));
+    expect(vehicleRepository.create).toHaveBeenCalledWith({
+      vehicle: new CreateVehicle({
+        ...VEHICLE_FIXTURE_NO_ID,
+        status: VehicleStatus.AVAILABLE,
+      }),
+    });
 
     expect(result).toEqual(vehicle);
   });
@@ -69,13 +70,14 @@ describe('CreateVehicleUseCase', () => {
       acquiredDate: new Date(),
       color: 'blue',
       fuelType: FuelType.PETROL,
-      licensePlate: 'ABC-123',
+      licensePlate: VEHICLE_FIXTURE.licensePlate,
       make: 'Toyota',
       model: 'Corolla',
+      motorizationType: MotorizationType.INTERNAL_COMBUSTION,
     };
 
     (vehicleRepository.findByLicensePlate as jest.Mock).mockResolvedValue(
-      vehicleMock,
+      VEHICLE_FIXTURE,
     );
 
     await expect(createVehicleUseCase.execute(vehicleData)).rejects.toThrow(

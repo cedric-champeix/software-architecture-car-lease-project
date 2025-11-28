@@ -1,9 +1,19 @@
+import { UseCase } from 'src/common/use-cases';
 import type { ContractRepository } from 'src/repositories/contract.repository';
 
-export class DeleteContractUseCase {
-  constructor(private readonly contractRepository: ContractRepository) {}
+export type DeleteContractUseCaseInput = {
+  id: string;
+};
 
-  async execute(id: string): Promise<void> {
-    return this.contractRepository.deleteById(id);
+export class DeleteContractUseCase extends UseCase<
+  DeleteContractUseCaseInput,
+  boolean
+> {
+  constructor(private readonly contractRepository: ContractRepository) {
+    super();
+  }
+
+  async execute({ id }: DeleteContractUseCaseInput): Promise<boolean> {
+    return this.contractRepository.deleteById({ id });
   }
 }
