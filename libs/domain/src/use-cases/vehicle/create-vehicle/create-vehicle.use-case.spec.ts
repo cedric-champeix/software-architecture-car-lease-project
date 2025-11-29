@@ -1,18 +1,18 @@
+import { CreateVehicle } from '@lib/domain/entities/vehicle';
 import {
   FuelType,
   MotorizationType,
   VehicleStatus,
-} from 'src/entities/vehicle/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
-
+} from '@lib/domain/entities/vehicle/enum';
+import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 import {
   VEHICLE_FIXTURE,
   VEHICLE_FIXTURE_NO_ID,
-} from 'src/test/fixtures/vehicle/vehicle.fixture';
+} from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
+
 import type { CreateVehicleUseCaseInput } from '.';
 import { CreateVehicleUseCase } from '.';
-import { CreateVehicle } from 'src/entities/vehicle';
 
 describe('CreateVehicleUseCase', () => {
   let createVehicleUseCase: CreateVehicleUseCase;
@@ -20,11 +20,11 @@ describe('CreateVehicleUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      create: jest.fn(),
       update: jest.fn(),
     };
     createVehicleUseCase = new CreateVehicleUseCase(vehicleRepository);

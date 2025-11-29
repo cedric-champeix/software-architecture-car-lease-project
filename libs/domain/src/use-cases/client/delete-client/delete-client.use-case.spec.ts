@@ -1,4 +1,4 @@
-import type { ClientRepository } from 'src/repositories/client.repository';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 import { DeleteClientUseCase } from '.';
 

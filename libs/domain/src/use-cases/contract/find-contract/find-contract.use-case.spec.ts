@@ -1,6 +1,6 @@
-import { Contract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { Contract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 import { FindContractUseCase } from '.';
 

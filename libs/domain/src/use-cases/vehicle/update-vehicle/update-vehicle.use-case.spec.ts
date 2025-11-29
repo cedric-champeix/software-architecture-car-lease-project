@@ -1,9 +1,9 @@
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
-import type { CancelContractsForVehicleInMaintenanceUseCase } from 'src/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
-import { UpdateVehicleUseCase } from 'src/use-cases/vehicle/update-vehicle';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
+import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
+import type { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
+import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
 
 describe('UpdateVehicleUseCase', () => {
   let updateVehicleUseCase: UpdateVehicleUseCase;

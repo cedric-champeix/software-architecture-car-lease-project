@@ -2,28 +2,31 @@ import type {
   Contract,
   CreateContract,
   UpdateContract,
-} from 'src/entities/contract';
+} from '@lib/domain/entities/contract';
 
-type FindContractByIdInput = { id: Contract['id'] };
+export type FindContractByIdInput = { id: Contract['id'] };
 
-type FindAllContractInput = {};
+export type FindAllContractInput = Record<string, never>;
 
-type FindContractByVehicleIdAndDateRangeInput = {
+export type FindContractByVehicleIdAndDateRangeInput = {
   vehicleId: Contract['vehicleId'];
   endDate?: Date;
   startDate?: Date;
 };
 
-type CreateContractInput = { contract: CreateContract };
+export type CreateContractInput = { contract: CreateContract };
 
-type UpdateContractInput = { contract: UpdateContract; id: Contract['id'] };
+export type UpdateContractInput = {
+  contract: UpdateContract;
+  id: Contract['id'];
+};
 
-type DeleteContractInput = { id: Contract['id'] };
+export type DeleteContractInput = { id: Contract['id'] };
 
 export abstract class ContractRepository {
   abstract findById({ id }: FindContractByIdInput): Promise<Contract | null>;
 
-  abstract findAll({}: FindAllContractInput): Promise<Contract[]>;
+  abstract findAll(input: FindAllContractInput): Promise<Contract[]>;
 
   abstract findByVehicleIdAndDateRange({
     vehicleId,

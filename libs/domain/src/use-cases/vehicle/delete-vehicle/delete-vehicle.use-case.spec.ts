@@ -1,7 +1,7 @@
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 
-import { DeleteVehicleUseCase } from '.';
 import type { DeleteVehicleUseCaseInput } from '.';
+import { DeleteVehicleUseCase } from '.';
 
 describe('DeleteVehicleUseCase', () => {
   let deleteVehicleUseCase: DeleteVehicleUseCase;

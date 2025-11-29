@@ -1,8 +1,8 @@
-import { Contract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { Contract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
 
-import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
 import { UpdateContractUseCase } from '.';
 
 describe('UpdateContractUseCase', () => {
@@ -36,18 +36,18 @@ describe('UpdateContractUseCase', () => {
     (contractRepository.update as jest.Mock).mockResolvedValue(updatedContract);
 
     const result = await updateContractUseCase.execute({
-      input: contractData,
       id: contractId.id,
+      input: contractData,
     });
 
     expect(contractRepository.findById).toHaveBeenCalledWith(contractId);
 
     expect(contractRepository.update).toHaveBeenCalledWith({
-      id: contractId.id,
       contract: {
         ...contract,
         ...contractData,
       },
+      id: contractId.id,
     });
 
     expect(result).toEqual(updatedContract);

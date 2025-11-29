@@ -1,6 +1,6 @@
-import { Contract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { Contract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 import { FindAllContractsUseCase } from '.';
 
@@ -10,12 +10,12 @@ describe('FindAllContractsUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
       update: jest.fn(),
-      create: jest.fn(),
     };
     findAllContractsUseCase = new FindAllContractsUseCase(contractRepository);
   });

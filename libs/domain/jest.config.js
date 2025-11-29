@@ -5,7 +5,8 @@ module.exports = {
   testRegex: '.*\\.spec\\.ts$',
   moduleFileExtensions: ['ts', 'js', 'json'],
   moduleNameMapper: {
-    '^src/(.*)$': '<rootDir>/$1'
+    '^src/(.*)$': '<rootDir>/$1',
+    '^@lib/domain/(.*)$': '<rootDir>/$1'
   },
   globals: {
     'ts-jest': {

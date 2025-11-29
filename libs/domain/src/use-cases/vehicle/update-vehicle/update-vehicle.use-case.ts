@@ -1,9 +1,12 @@
-import { UseCase } from 'src/common/use-cases';
-import type { FuelType, MotorizationType } from 'src/entities/vehicle/enum';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
-import type { CancelContractsForVehicleInMaintenanceUseCase } from 'src/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type {
+  FuelType,
+  MotorizationType,
+} from '@lib/domain/entities/vehicle/enum';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import type { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
+import type { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
 
 export type UpdateVehicleUseCaseInput = {
   id: string;

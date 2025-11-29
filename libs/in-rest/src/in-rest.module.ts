@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { InRestService } from './in-rest.service';
+import { ClientModule } from './client/client.module';
+import { ContractModule } from './contract/contract.module';
+import { VehicleModule } from './vehicle/vehicle.module';
 
 @Module({
-  exports: [InRestService],
-  providers: [InRestService],
+  exports: [ClientModule, ContractModule, VehicleModule],
+  imports: [ClientModule, ContractModule, VehicleModule],
 })
 export class InRestModule {}

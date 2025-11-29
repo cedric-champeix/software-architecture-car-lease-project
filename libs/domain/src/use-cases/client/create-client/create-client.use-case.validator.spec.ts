@@ -1,13 +1,13 @@
-import { Client } from 'src/entities/client/client.entity';
-import type { ClientRepository } from 'src/repositories/client.repository';
-
-import { CreateClientUseCaseValidator } from './create-client.use-case.validator';
+import { CreateClient } from '@lib/domain/entities/client';
+import { Client } from '@lib/domain/entities/client/client.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 import {
   CLIENT_FIXTURE,
   CLIENT_FIXTURE_NO_ID,
-} from 'src/test/fixtures/client/client.fixture';
-import { CreateClientUseCaseInput } from '.';
-import { CreateClient } from 'src/entities/client';
+} from '@lib/domain/test/fixtures/client/client.fixture';
+
+import type { CreateClientUseCaseInput } from '.';
+import { CreateClientUseCaseValidator } from './create-client.use-case.validator';
 
 describe('CreateClientUseCaseValidator', () => {
   let createClientUseCase: CreateClientUseCaseValidator;
@@ -110,7 +110,7 @@ describe('CreateClientUseCaseValidator', () => {
       const newClientData = {
         ...CLIENT_FIXTURE_NO_ID,
         driverLicenseNumber: '12345',
-        firstName: 'John',
+        firstName: 'Jane',
       };
 
       (clientRepository.findAll as jest.Mock).mockResolvedValue([
@@ -134,6 +134,7 @@ describe('CreateClientUseCaseValidator', () => {
       const newClientData = {
         ...CLIENT_FIXTURE_NO_ID,
         driverLicenseNumber: '12345',
+        firstName: 'Jane',
       };
 
       const newClient = new Client({ ...newClientData, id: '2' });

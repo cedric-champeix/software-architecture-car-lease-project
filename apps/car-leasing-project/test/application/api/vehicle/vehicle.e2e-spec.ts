@@ -1,15 +1,20 @@
+import {
+  FuelType,
+  MotorizationType,
+  VehicleStatus,
+} from '@lib/domain/entities/vehicle/enum';
+import type { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import { VehicleModel } from '@lib/out-mongoose/schemas/vehicle.schema';
 import type { INestApplication } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Model } from 'mongoose';
-import { AppModule } from 'src/app.module';
-import type { Vehicle } from 'src/domain/entities/vehicle.entity';
-import { FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
-import { VehicleModel } from 'src/infrastructure/persistence/mongoose/schemas/vehicle.schema';
 import request from 'supertest';
 import type { App } from 'supertest/types';
+
+import { AppModule } from '../../../../src/app.module';
 
 describe('VehicleController (e2e)', () => {
   let app: INestApplication;
@@ -47,6 +52,7 @@ describe('VehicleController (e2e)', () => {
         licensePlate: 'ABC-123',
         make: 'Toyota',
         model: 'Corolla',
+        motorizationType: MotorizationType.INTERNAL_COMBUSTION,
       });
 
     expect(response.status).toBe(201);
@@ -60,6 +66,7 @@ describe('VehicleController (e2e)', () => {
       licensePlate: 'ABC-123',
       make: 'Toyota',
       model: 'Corolla',
+      motorizationType: MotorizationType.INTERNAL_COMBUSTION,
       status: VehicleStatus.AVAILABLE,
     });
 

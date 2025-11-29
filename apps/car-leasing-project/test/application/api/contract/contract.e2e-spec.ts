@@ -1,16 +1,21 @@
+import {
+  FuelType,
+  MotorizationType,
+  VehicleStatus,
+} from '@lib/domain/entities/vehicle/enum';
+import { ClientModel } from '@lib/out-mongoose/schemas/client.schema';
+import { ContractModel } from '@lib/out-mongoose/schemas/contract.schema';
+import { VehicleModel } from '@lib/out-mongoose/schemas/vehicle.schema';
 import type { INestApplication } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Model } from 'mongoose';
-import { AppModule } from 'src/app.module';
-import { FuelType, VehicleStatus } from 'src/domain/entities/vehicle.entity';
-import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
-import { ContractModel } from 'src/infrastructure/persistence/mongoose/schemas/contract.schema';
-import { VehicleModel } from 'src/infrastructure/persistence/mongoose/schemas/vehicle.schema';
 import request from 'supertest';
 import type { App } from 'supertest/types';
+
+import { AppModule } from '../../../../src/app.module';
 
 describe('ContractController (e2e)', () => {
   let app: INestApplication;
@@ -56,6 +61,7 @@ describe('ContractController (e2e)', () => {
       email: 'john.doe.contract@example.com',
       firstName: 'John',
       lastName: 'Doe',
+      phoneNumber: '123456789',
     });
 
     const vehicle = await vehicleModel.create({
@@ -67,6 +73,7 @@ describe('ContractController (e2e)', () => {
       make: 'Toyota',
       mileage: 10000,
       model: 'Corolla',
+      motorizationType: MotorizationType.INTERNAL_COMBUSTION,
       vehicleStatus: VehicleStatus.AVAILABLE,
       vin: '123456789',
       year: 2020,

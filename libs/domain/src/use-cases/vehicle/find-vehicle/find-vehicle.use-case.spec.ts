@@ -1,13 +1,7 @@
-import {
-  FuelType,
-  MotorizationType,
-  VehicleStatus,
-} from 'src/entities/vehicle/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
+import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
 
 import { FindVehicleUseCase } from '.';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
 
 describe('FindVehicleUseCase', () => {
   let findVehicleUseCase: FindVehicleUseCase;

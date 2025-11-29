@@ -1,5 +1,5 @@
-import { UseCase } from 'src/common/use-cases';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 export type DeleteContractUseCaseInput = {
   id: string;
