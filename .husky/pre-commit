@@ -1,4 +1,5 @@
 set -e
 
 pnpm lint-staged
+pnpm type
 pnpm test
