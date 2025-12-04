@@ -1,10 +1,10 @@
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
 import {
   FuelType,
   MotorizationType,
   VehicleStatus,
-} from 'src/entities/vehicle/enum';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+} from '@lib/domain/entities/vehicle/enum';
+import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 
 import { FindAllVehiclesUseCase } from '.';
 
@@ -14,12 +14,12 @@ describe('FindAllVehiclesUseCase', () => {
 
   beforeEach(() => {
     vehicleRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
       update: jest.fn(),
-      create: jest.fn(),
     };
     findAllVehiclesUseCase = new FindAllVehiclesUseCase(vehicleRepository);
   });

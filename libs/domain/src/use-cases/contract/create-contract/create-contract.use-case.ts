@@ -1,11 +1,11 @@
-import { UseCase } from 'src/common/use-cases';
-import type { Contract } from 'src/entities/contract/contract.entity';
-import { CreateContract } from 'src/entities/contract/create-contract.entity';
-import { ContractStatus } from 'src/entities/contract/enum';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { ClientRepository } from 'src/repositories/client.repository';
-import type { ContractRepository } from 'src/repositories/contract.repository';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import type { Contract } from '@lib/domain/entities/contract/contract.entity';
+import { CreateContract } from '@lib/domain/entities/contract/create-contract.entity';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 
 export type CreateContractUseCaseInput = {
   clientId: string;

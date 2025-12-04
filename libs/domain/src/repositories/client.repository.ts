@@ -1,22 +1,26 @@
-import type { Client, CreateClient, UpdateClient } from 'src/entities/client';
+import type {
+  Client,
+  CreateClient,
+  UpdateClient,
+} from '@lib/domain/entities/client';
 
-type CreateClientInput = { client: CreateClient };
+export type CreateClientInput = { client: CreateClient };
 
-type FindClientByIdInput = { id: Client['id'] };
+export type FindClientByIdInput = { id: Client['id'] };
 
-type FindAllClientsInput = {};
+export type FindAllClientsInput = Record<string, never>;
 
-type UpdateClientInput = {
+export type UpdateClientInput = {
   clientData: UpdateClient;
   id: Client['id'];
 };
 
-type DeleteClientByIdInput = { id: Client['id'] };
+export type DeleteClientInput = { id: Client['id'] };
 
 export abstract class ClientRepository {
   abstract findById({ id }: FindClientByIdInput): Promise<Client | null>;
 
-  abstract findAll({}): Promise<Client[]>;
+  abstract findAll(input: FindAllClientsInput): Promise<Client[]>;
 
   abstract create({ client }: CreateClientInput): Promise<Client>;
 
@@ -25,5 +29,5 @@ export abstract class ClientRepository {
     clientData,
   }: UpdateClientInput): Promise<Client | null>;
 
-  abstract deleteById({ id }: DeleteClientByIdInput): Promise<boolean>;
+  abstract deleteById({ id }: DeleteClientInput): Promise<boolean>;
 }

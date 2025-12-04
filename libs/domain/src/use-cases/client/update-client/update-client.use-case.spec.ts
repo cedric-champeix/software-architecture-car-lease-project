@@ -1,15 +1,15 @@
-import { Client } from 'src/entities/client/client.entity';
-import type { ClientRepository } from 'src/repositories/client.repository';
+import { Client } from '@lib/domain/entities/client/client.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 
 import { UpdateClientUseCase } from '.';
 
 const clientMock = new Client({
-  id: 'client-1',
   address: '123 Main St',
   birthDate: new Date('1990-01-01'),
   driverLicenseNumber: '12345',
   email: 'jhon.doe@email.com',
   firstName: 'John',
+  id: 'client-1',
   lastName: 'Doe',
   phoneNumber: '+1234567890',
 });
@@ -32,10 +32,10 @@ describe('UpdateClientUseCase', () => {
   it('should update a client', async () => {
     const id = clientMock.id;
     const clientData = {
+      address: '123 Main St',
+      driverLicenseNumber: '123456789',
       email: 'new.email@email.com',
       phoneNumber: '+1234567890',
-      driverLicenseNumber: '123456789',
-      address: '123 Main St',
     };
 
     const client = new Client({

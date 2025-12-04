@@ -1,15 +1,15 @@
+import type { Client } from '@lib/domain/entities/client/client.entity';
+import { ClientModel } from '@lib/out-mongoose/schemas/client.schema';
 import type { INestApplication } from '@nestjs/common';
 import { ValidationPipe } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 import type { Model } from 'mongoose';
-import { AppModule } from 'src/app.module';
-import { ClientModel } from 'src/infrastructure/persistence/mongoose/schemas/client.schema';
 import request from 'supertest';
 import type { App } from 'supertest/types';
 
-import type { Client } from '/domain/entities/client.entity';
+import { AppModule } from '../../../../src/app.module';
 
 describe('ClientController (e2e)', () => {
   let app: INestApplication;
@@ -47,6 +47,7 @@ describe('ClientController (e2e)', () => {
         email: 'john.doe@example.com',
         firstName: 'John',
         lastName: 'Doe',
+        phoneNumber: '123456789',
       });
 
     expect(response.status).toBe(201);
@@ -57,8 +58,10 @@ describe('ClientController (e2e)', () => {
       address: '123 Main St',
       birthDate: new Date('1990-01-01'),
       driverLicenseNumber: '12345-get',
+      email: 'john.doe.get@example.com',
       firstName: 'John',
       lastName: 'Doe',
+      phoneNumber: '987654321',
     });
 
     const response = await request(app.getHttpServer() as App).get('/clients');

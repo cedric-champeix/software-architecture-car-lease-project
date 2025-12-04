@@ -1,9 +1,12 @@
-import { UseCase } from 'src/common/use-cases';
-import { CreateVehicle } from 'src/entities/vehicle';
-import type { FuelType, MotorizationType } from 'src/entities/vehicle/enum';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import { CreateVehicle } from '@lib/domain/entities/vehicle';
+import type {
+  FuelType,
+  MotorizationType,
+} from '@lib/domain/entities/vehicle/enum';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import type { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 
 export type CreateVehicleUseCaseInput = {
   acquiredDate: Date;

@@ -1,9 +1,9 @@
-import { Contract, UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { Contract, UpdateContract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
 
 import { HandleOverdueContractsUseCase } from '.';
-import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
 
 describe('HandleOverdueContractsUseCase', () => {
   let useCase: HandleOverdueContractsUseCase;
@@ -11,11 +11,11 @@ describe('HandleOverdueContractsUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      create: jest.fn(),
       update: jest.fn(),
     };
     useCase = new HandleOverdueContractsUseCase(contractRepository);
@@ -29,15 +29,15 @@ describe('HandleOverdueContractsUseCase', () => {
 
     const contract1 = new Contract({
       ...CONTRACT_FIXTURE,
+      endDate: new Date(now.getTime() - 1000),
       id: contractId1,
       startDate: new Date(now.getTime() - 1000),
-      endDate: new Date(now.getTime() - 1000),
     });
     const contract2 = new Contract({
       ...CONTRACT_FIXTURE,
+      endDate: new Date(now.getTime() + 1000),
       id: contractId2,
       startDate: new Date(now.getTime() + 1000),
-      endDate: new Date(now.getTime() + 1000),
     });
 
     const contracts = [contract1, contract2];
@@ -51,13 +51,13 @@ describe('HandleOverdueContractsUseCase', () => {
     await useCase.execute();
 
     expect(contractRepository.update).toHaveBeenCalledWith({
-      id: contractId1,
       contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+      id: contractId1,
     });
 
     expect(contractRepository.update).not.toHaveBeenCalledWith({
-      id: contractId2,
       contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+      id: contractId2,
     });
   });
 
@@ -66,15 +66,15 @@ describe('HandleOverdueContractsUseCase', () => {
 
     const overdueContract = new Contract({
       ...CONTRACT_FIXTURE,
-      startDate: new Date(now.getTime() - 2000),
       endDate: new Date(now.getTime() - 1000),
+      startDate: new Date(now.getTime() - 2000),
     });
 
     const nextContract = new Contract({
       ...CONTRACT_FIXTURE,
+      endDate: new Date(now.getTime() + 1000),
       id: 'SomeId',
       startDate: new Date(now.getTime()),
-      endDate: new Date(now.getTime() + 1000),
     });
 
     (contractRepository.findAll as jest.Mock).mockResolvedValue([
@@ -90,13 +90,13 @@ describe('HandleOverdueContractsUseCase', () => {
     expect(contractRepository.update).toHaveBeenCalledTimes(2);
 
     expect(contractRepository.update).toHaveBeenCalledWith({
-      id: overdueContract.id,
       contract: new UpdateContract({ status: ContractStatus.OVERDUE }),
+      id: overdueContract.id,
     });
 
     expect(contractRepository.update).toHaveBeenCalledWith({
-      id: nextContract.id,
       contract: new UpdateContract({ status: ContractStatus.CANCELLED }),
+      id: nextContract.id,
     });
   });
 });

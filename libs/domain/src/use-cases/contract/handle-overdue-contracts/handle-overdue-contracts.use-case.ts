@@ -1,8 +1,8 @@
-import { UseCase } from 'src/common/use-cases';
-import { ONE_DAY_IN_MS } from 'src/constants/constant';
-import { UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { UseCase } from '@lib/domain/common/use-cases';
+import { ONE_DAY_IN_MS } from '@lib/domain/constants/constant';
+import { UpdateContract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
 
 const AFFECTED_CONTRACTS_DATE_RANGE = ONE_DAY_IN_MS * 3;
 
@@ -20,7 +20,7 @@ export class HandleOverdueContractsUseCase extends UseCase<void, void> {
         contract.endDate < new Date(),
     );
 
-    overdueContracts.forEach(async ({ id, startDate, endDate, vehicleId }) => {
+    for (const { id, startDate, endDate, vehicleId } of overdueContracts) {
       const updateContract = new UpdateContract({
         status: ContractStatus.OVERDUE,
       });
@@ -34,7 +34,7 @@ export class HandleOverdueContractsUseCase extends UseCase<void, void> {
           vehicleId,
         });
 
-      affectedContracts.forEach(async (affectedContract) => {
+      for (const affectedContract of affectedContracts) {
         if (affectedContract.id !== id) {
           const updateContract = new UpdateContract({
             status: ContractStatus.CANCELLED,
@@ -45,7 +45,7 @@ export class HandleOverdueContractsUseCase extends UseCase<void, void> {
             id: affectedContract.id,
           });
         }
-      });
-    });
+      }
+    }
   }
 }

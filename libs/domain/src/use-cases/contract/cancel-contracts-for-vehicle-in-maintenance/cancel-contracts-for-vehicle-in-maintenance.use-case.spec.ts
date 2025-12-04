@@ -1,16 +1,12 @@
-import { Contract, UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import {
-  FuelType,
-  MotorizationType,
-  VehicleStatus,
-} from 'src/entities/vehicle/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
+import { Contract, UpdateContract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
+import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
+import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
 
 import { CancelContractsForVehicleInMaintenanceUseCase } from '.';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
-import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
 
 describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
   let cancelContractUseCase: CancelContractsForVehicleInMaintenanceUseCase;
@@ -18,11 +14,11 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      create: jest.fn(),
       update: jest.fn(),
     };
 
@@ -39,18 +35,18 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
 
     const contract1 = new Contract({
       ...CONTRACT_FIXTURE,
+      endDate: new Date(new Date().getTime() + 20),
       id: '1',
       startDate: new Date(new Date().getTime() + 10),
-      endDate: new Date(new Date().getTime() + 20),
       status: ContractStatus.PENDING,
       vehicleId: vehicle.id,
     });
 
     const contract2 = new Contract({
       ...CONTRACT_FIXTURE,
+      endDate: new Date(new Date().getTime() - 10),
       id: '2',
       startDate: new Date(new Date().getTime() - 20),
-      endDate: new Date(new Date().getTime() - 10),
       status: ContractStatus.ACTIVE,
       vehicleId: vehicle.id,
     });
@@ -65,24 +61,26 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
 
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
       {
-        vehicleId: vehicle.id,
-        startDate: expect.any(Date),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         endDate: expect.any(Date),
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        startDate: expect.any(Date),
+        vehicleId: vehicle.id,
       },
     );
 
     expect(contractRepository.update).toHaveBeenCalledWith({
-      id: '1',
       contract: new UpdateContract({
         status: ContractStatus.CANCELLED,
       }),
+      id: '1',
     });
 
     expect(contractRepository.update).not.toHaveBeenCalledWith({
-      id: '2',
       contract: new UpdateContract({
         status: ContractStatus.CANCELLED,
       }),
+      id: '2',
     });
   });
 

@@ -1,23 +1,21 @@
-import { Client } from 'src/entities/client/client.entity';
-import { Contract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
+import { Client } from '@lib/domain/entities/client/client.entity';
+import { Contract } from '@lib/domain/entities/contract';
+import { CreateContract } from '@lib/domain/entities/contract';
+import { ContractStatus } from '@lib/domain/entities/contract/enum';
 import {
   FuelType,
   MotorizationType,
   VehicleStatus,
-} from 'src/entities/vehicle/enum';
-import type { ClientRepository } from 'src/repositories/client.repository';
-import type { ContractRepository } from 'src/repositories/contract.repository';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+} from '@lib/domain/entities/vehicle/enum';
+import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
+import type { ClientRepository } from '@lib/domain/repositories/client.repository';
+import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
+import { CLIENT_FIXTURE } from '@lib/domain/test/fixtures/client/client.fixture';
+import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
+import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
 
-import { CreateContractUseCase } from '.';
-import { CLIENT_FIXTURE } from 'src/test/fixtures/client/client.fixture';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
-import {
-  CONTRACT_FIXTURE,
-  CONTRACT_FIXTURE_NO_ID,
-} from 'src/test/fixtures/contract/contract.fixture';
+import { CreateContractUseCase } from './create-contract.use-case';
 
 describe('CreateContractUseCase', () => {
   let createContractUseCase: CreateContractUseCase;
@@ -27,19 +25,19 @@ describe('CreateContractUseCase', () => {
 
   beforeEach(() => {
     contractRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByVehicleIdAndDateRange: jest.fn(),
-      create: jest.fn(),
       update: jest.fn(),
     };
     vehicleRepository = {
+      create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
       findById: jest.fn(),
       findByLicensePlate: jest.fn(),
-      create: jest.fn(),
       update: jest.fn(),
     };
     clientRepository = {
@@ -59,9 +57,9 @@ describe('CreateContractUseCase', () => {
   it('should create a new contract', async () => {
     const contractData = {
       clientId: 'client-1',
-      vehicleId: 'vehicle-1',
-      startDate: new Date('2020-01-01'),
       endDate: new Date('2020-01-01'),
+      startDate: new Date('2020-01-01'),
+      vehicleId: 'vehicle-1',
     };
 
     const client = new Client({ ...CLIENT_FIXTURE });
@@ -96,16 +94,17 @@ describe('CreateContractUseCase', () => {
 
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
       {
-        vehicleId: contractData.vehicleId,
-        startDate: contractData.startDate,
         endDate: contractData.endDate,
+        startDate: contractData.startDate,
+        vehicleId: contractData.vehicleId,
       },
     );
 
     expect(contractRepository.create).toHaveBeenCalledWith({
-      ...CONTRACT_FIXTURE_NO_ID,
-      ...contractData,
-      status: ContractStatus.PENDING,
+      contract: new CreateContract({
+        ...contractData,
+        status: ContractStatus.PENDING,
+      }),
     });
 
     expect(result).toEqual(contract);
@@ -181,8 +180,8 @@ describe('CreateContractUseCase', () => {
   it('should throw an error if vehicle is already leased during the period', async () => {
     const contractData = {
       clientId: '1',
-      startDate: new Date('2025-12-01'),
       endDate: new Date('2025-12-10'),
+      startDate: new Date('2025-12-01'),
       vehicleId: '1',
     };
 

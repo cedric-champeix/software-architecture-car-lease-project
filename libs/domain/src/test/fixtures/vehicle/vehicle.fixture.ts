@@ -1,19 +1,19 @@
-import { Vehicle } from 'src/entities/vehicle';
+import { Vehicle } from '@lib/domain/entities/vehicle';
 import {
   FuelType,
   MotorizationType,
   VehicleStatus,
-} from 'src/entities/vehicle/enum';
+} from '@lib/domain/entities/vehicle/enum';
 
 export const VEHICLE_FIXTURE_NO_ID = {
+  acquiredDate: new Date(),
+  color: 'blue',
+  fuelType: FuelType.PETROL,
   licensePlate: 'ABC-123',
   make: 'Toyota',
   model: 'Corolla',
-  fuelType: FuelType.PETROL,
   motorizationType: MotorizationType.ELECTRIC,
   status: VehicleStatus.AVAILABLE,
-  acquiredDate: new Date(),
-  color: 'blue',
 };
 
 export const VEHICLE_FIXTURE = new Vehicle({
