@@ -1,19 +1,7 @@
-import { Client } from '@lib/domain/entities/client/client.entity';
-import { Contract } from '@lib/domain/entities/contract';
-import { CreateContract } from '@lib/domain/entities/contract';
+import { Contract, CreateContract } from '@lib/domain/entities/contract';
 import { ContractStatus } from '@lib/domain/entities/contract/enum';
-import {
-  FuelType,
-  MotorizationType,
-  VehicleStatus,
-} from '@lib/domain/entities/vehicle/enum';
-import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
-import type { ClientRepository } from '@lib/domain/repositories/client.repository';
 import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
-import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
-import { CLIENT_FIXTURE } from '@lib/domain/test/fixtures/client/client.fixture';
 import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
-import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
 
 import { CreateContractUseCase } from './create-contract.use-case';
 

@@ -4,7 +4,6 @@ import { DeleteVehicleUseCase } from '@lib/domain/use-cases/vehicle/delete-vehic
 import { FindAllVehiclesUseCase } from '@lib/domain/use-cases/vehicle/find-all-vehicles';
 import { FindVehicleUseCase } from '@lib/domain/use-cases/vehicle/find-vehicle';
 import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
-import { OutMessagesModule } from '@lib/out-messages/out-messages.module';
 import { OutMongooseModule } from '@lib/out-mongoose/out-mongoose.module';
 import { VehicleMongooseRepository } from '@lib/out-mongoose/repositories/vehicle.mongoose.repository';
 import { forwardRef, Module } from '@nestjs/common';
@@ -21,11 +20,7 @@ import { VehicleController } from './vehicle.controller';
     FindVehicleUseCase,
     UpdateVehicleUseCase,
   ],
-  imports: [
-    OutMongooseModule,
-    forwardRef(() => ContractModule),
-    OutMessagesModule,
-  ],
+  imports: [OutMongooseModule, forwardRef(() => ContractModule)],
   providers: [
     {
       inject: [VehicleMongooseRepository],

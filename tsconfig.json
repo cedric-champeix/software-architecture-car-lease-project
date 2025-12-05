@@ -18,6 +18,9 @@
       "@lib/domain/*": [
         "libs/domain/src/*"
       ],
+      "@lib/common/*": [
+        "libs/common/src/*"
+      ],
       "@lib/in-cron": [
         "libs/in-cron/src"
       ],

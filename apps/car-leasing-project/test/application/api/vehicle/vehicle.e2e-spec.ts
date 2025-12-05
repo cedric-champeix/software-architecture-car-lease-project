@@ -21,6 +21,7 @@ describe('VehicleController (e2e)', () => {
   let vehicleModel: Model<VehicleModel>;
 
   beforeAll(async () => {
+    process.env.MONGO_URI = 'mongodb://localhost/car-lease-test-vehicle';
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -44,7 +45,7 @@ describe('VehicleController (e2e)', () => {
 
   it('/vehicles (POST)', async () => {
     const response = await request(app.getHttpServer() as App)
-      .post('/vehicles')
+      .post('/api/v1/vehicles')
       .send({
         acquiredDate: new Date(),
         color: 'blue',
@@ -70,7 +71,9 @@ describe('VehicleController (e2e)', () => {
       status: VehicleStatus.AVAILABLE,
     });
 
-    const response = await request(app.getHttpServer() as App).get('/vehicles');
+    const response = await request(app.getHttpServer() as App).get(
+      '/api/v1/vehicles',
+    );
     const vehicles = response.body as Vehicle[];
 
     expect(response.status).toBe(200);
