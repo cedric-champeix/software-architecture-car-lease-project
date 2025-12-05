@@ -1,5 +1,5 @@
 import { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
-import { CreateContractUseCase } from '@lib/domain/use-cases/contract/create-contract';
+import { CreateContractUseCaseValidator } from '@lib/domain/use-cases/contract/create-contract';
 import { DeleteContractUseCase } from '@lib/domain/use-cases/contract/delete-contract';
 import { FindAllContractsUseCase } from '@lib/domain/use-cases/contract/find-all-contracts';
 import { FindContractUseCase } from '@lib/domain/use-cases/contract/find-contract';
@@ -29,13 +29,13 @@ import { ContractController } from './contract.controller';
         ClientMongooseRepository,
         VehicleMongooseRepository,
       ],
-      provide: CreateContractUseCase,
+      provide: CreateContractUseCaseValidator,
       useFactory: (
         contractRepository: ContractMongooseRepository,
         clientRepository: ClientMongooseRepository,
         vehicleRepository: VehicleMongooseRepository,
       ) => {
-        return new CreateContractUseCase(
+        return new CreateContractUseCaseValidator(
           contractRepository,
           clientRepository,
           vehicleRepository,
