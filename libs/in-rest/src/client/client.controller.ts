@@ -21,7 +21,7 @@ import { UpdateClientDtoMapper } from './adapter/update-client.mapper';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
-@Controller('clients')
+@Controller('/api/v1/clients')
 export class ClientController {
   constructor(
     private readonly findClientUseCase: FindClientUseCase,

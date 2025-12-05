@@ -1,9 +1,9 @@
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
-import type { VehicleMaintenanceProducer } from 'src/producers/vehicle-maintenance.producer';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
-import { UpdateVehicleUseCase } from 'src/use-cases/vehicle/update-vehicle';
+import { VehicleStatus } from '../../../entities/vehicle/enum';
+import { Vehicle } from '../../../entities/vehicle/vehicle.entity';
+import type { VehicleMaintenanceProducer } from '../../../producers/vehicle-maintenance.producer';
+import type { VehicleRepository } from '../../../repositories/vehicle.repository';
+import { VEHICLE_FIXTURE } from '../../../test/fixtures/vehicle/vehicle.fixture';
+import { UpdateVehicleUseCase } from '../../../use-cases/vehicle/update-vehicle';
 
 describe('UpdateVehicleUseCase', () => {
   let updateVehicleUseCase: UpdateVehicleUseCase;

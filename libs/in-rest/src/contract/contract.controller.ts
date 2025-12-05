@@ -17,7 +17,7 @@ import {
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 
-@Controller('contracts')
+@Controller('/api/v1/contracts')
 export class ContractController {
   constructor(
     @Inject(CreateContractUseCaseValidator)

@@ -9,6 +9,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { HealthModule } from './health/health.module';
 
 @Module({
   controllers: [AppController],
@@ -25,6 +26,7 @@ import { AppService } from './app.service';
     InCronModule,
     InMessagesModule,
     OutMessagesModule,
+    HealthModule,
   ],
   providers: [AppService],
 })

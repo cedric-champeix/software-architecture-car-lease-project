@@ -1,10 +1,10 @@
-import { UseCase } from 'src/common/use-cases';
-import { ONE_YEAR_IN_MS } from 'src/constants/constant';
-import { UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { UseCase } from '../../../common/use-cases';
+import { ONE_YEAR_IN_MS } from '../../../constants/constant';
+import { UpdateContract } from '../../../entities/contract';
+import { ContractStatus } from '../../../entities/contract/enum';
+import { VehicleStatus } from '../../../entities/vehicle/enum';
+import type { ContractRepository } from '../../../repositories/contract.repository';
+import type { VehicleRepository } from '../../../repositories/vehicle.repository';
 
 export const MAINTENANCE_DATE_RANGE = new Date(
   new Date().getTime() + ONE_YEAR_IN_MS,

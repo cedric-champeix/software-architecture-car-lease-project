@@ -1,12 +1,11 @@
-import { Contract, UpdateContract } from 'src/entities/contract';
-import { ContractStatus } from 'src/entities/contract/enum';
-import { Vehicle } from 'src/entities/vehicle';
-import { VehicleStatus } from 'src/entities/vehicle/enum';
-import type { ContractRepository } from 'src/repositories/contract.repository';
-import type { VehicleRepository } from 'src/repositories/vehicle.repository';
-import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
-import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
-
+import { Contract, UpdateContract } from '../../../entities/contract';
+import { ContractStatus } from '../../../entities/contract/enum';
+import { Vehicle } from '../../../entities/vehicle';
+import { VehicleStatus } from '../../../entities/vehicle/enum';
+import type { ContractRepository } from '../../../repositories/contract.repository';
+import type { VehicleRepository } from '../../../repositories/vehicle.repository';
+import { CONTRACT_FIXTURE } from '../../../test/fixtures/contract/contract.fixture';
+import { VEHICLE_FIXTURE } from '../../../test/fixtures/vehicle/vehicle.fixture';
 import { CancelContractsForVehicleInMaintenanceUseCase } from '.';
 
 describe('CancelContractsForVehicleInMaintenanceUseCase', () => {

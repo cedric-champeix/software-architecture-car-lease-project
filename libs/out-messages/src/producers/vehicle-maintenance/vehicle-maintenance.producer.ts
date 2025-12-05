@@ -2,8 +2,9 @@ import { VehicleMaintenanceProducer as VehicleMaintenanceAbstractProducer } from
 import { InjectQueue } from '@nestjs/bullmq';
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bullmq';
-import { JobNames } from 'src/enum/job-names';
-import { QueueNames } from 'src/enum/queue-names';
+
+import { JobNames } from '../../enum/job-names';
+import { QueueNames } from '../../enum/queue-names';
 
 @Injectable()
 export class VehicleMaintenanceProducer extends VehicleMaintenanceAbstractProducer {

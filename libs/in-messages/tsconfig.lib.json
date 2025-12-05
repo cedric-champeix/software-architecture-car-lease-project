@@ -7,7 +7,9 @@
     "paths": {
       "src/*": ["src/*"],
       "@lib/domain/*": ["../../libs/domain/src/*"],
-      "@lib/out-messages/*": ["../../libs/out-messages/src/*"]
+      "@lib/out-messages/*": ["../../libs/out-messages/src/*"],
+      "@lib/out-mongoose": ["../../libs/out-mongoose/src"],
+      "@lib/out-mongoose/*": ["../../libs/out-mongoose/src/*"]
     }
   },
   "include": ["src/**/*"],

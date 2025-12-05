@@ -17,7 +17,7 @@ import {
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
-@Controller('vehicles')
+@Controller('/api/v1/vehicles')
 export class VehicleController {
   constructor(
     @Inject(CreateVehicleUseCase)

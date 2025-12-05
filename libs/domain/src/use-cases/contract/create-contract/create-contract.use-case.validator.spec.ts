@@ -26,8 +26,8 @@ describe('CreateContractUseCaseValidator', () => {
       create: jest.fn(),
       deleteById: jest.fn(),
       findAll: jest.fn(),
-      findByVehicleIdAndDateRange: jest.fn(),
       findById: jest.fn(),
+      findByVehicleIdAndDateRange: jest.fn(),
       update: jest.fn(),
       updateStatus: jest.fn(),
     } as unknown as ContractRepository;
