@@ -5,7 +5,8 @@
     "outDir": "../../dist/libs/out-messages",
     "baseUrl": ".",
     "paths": {
-      "src/*": ["src/*"]
+      "src/*": ["src/*"],
+      "@lib/domain/*": ["../../libs/domain/src/*"]
     }
   },
   "include": ["src/**/*"],

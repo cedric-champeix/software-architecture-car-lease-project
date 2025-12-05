@@ -1,24 +1,33 @@
-import { UseCase } from '@lib/domain/common/use-cases';
-import { ONE_YEAR_IN_MS } from '@lib/domain/constants/constant';
-import { UpdateContract } from '@lib/domain/entities/contract';
-import { ContractStatus } from '@lib/domain/entities/contract/enum';
-import type { Vehicle } from '@lib/domain/entities/vehicle';
-import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
-import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
+import { UseCase } from 'src/common/use-cases';
+import { ONE_YEAR_IN_MS } from 'src/constants/constant';
+import { UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import type { ContractRepository } from 'src/repositories/contract.repository';
+import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
 export const MAINTENANCE_DATE_RANGE = new Date(
   new Date().getTime() + ONE_YEAR_IN_MS,
 );
 
 export class CancelContractsForVehicleInMaintenanceUseCase extends UseCase<
-  Vehicle,
+  string,
   void
 > {
-  constructor(private readonly contractRepository: ContractRepository) {
+  constructor(
+    private readonly contractRepository: ContractRepository,
+    private readonly vehicleRepository: VehicleRepository,
+  ) {
     super();
   }
 
-  async execute(vehicle: Vehicle): Promise<void> {
+  async execute(vehicleId: string): Promise<void> {
+    const vehicle = await this.vehicleRepository.findById({ id: vehicleId });
+
+    if (!vehicle) {
+      throw new Error('Vehicle not found.');
+    }
+
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
       const contracts =
         await this.contractRepository.findByVehicleIdAndDateRange({

@@ -1,14 +1,14 @@
-import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
-import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
-import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
-import type { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
-import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import { Vehicle } from 'src/entities/vehicle/vehicle.entity';
+import type { VehicleMaintenanceProducer } from 'src/producers/vehicle-maintenance.producer';
+import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
+import { UpdateVehicleUseCase } from 'src/use-cases/vehicle/update-vehicle';
 
 describe('UpdateVehicleUseCase', () => {
   let updateVehicleUseCase: UpdateVehicleUseCase;
   let vehicleRepository: VehicleRepository;
-  let cancelContractsForVehicleInMaintenanceUseCase: CancelContractsForVehicleInMaintenanceUseCase;
+  let vehicleMaintenanceProducer: VehicleMaintenanceProducer;
 
   beforeEach(() => {
     vehicleRepository = {
@@ -19,12 +19,14 @@ describe('UpdateVehicleUseCase', () => {
       findByLicensePlate: jest.fn(),
       update: jest.fn(),
     };
-    cancelContractsForVehicleInMaintenanceUseCase = {
-      execute: jest.fn(),
-    } as unknown as CancelContractsForVehicleInMaintenanceUseCase;
+
+    vehicleMaintenanceProducer = {
+      sendVehicleMaintenanceJob: jest.fn(),
+    } as VehicleMaintenanceProducer;
+
     updateVehicleUseCase = new UpdateVehicleUseCase(
       vehicleRepository,
-      cancelContractsForVehicleInMaintenanceUseCase,
+      vehicleMaintenanceProducer,
     );
   });
 
@@ -58,7 +60,7 @@ describe('UpdateVehicleUseCase', () => {
     expect(result).toEqual(updatedVehicle);
   });
 
-  it('should cancel contracts if vehicle status is maintenance', async () => {
+  it('should send vehicle maintenance job if vehicle status is maintenance', async () => {
     const vehicleId = { id: '123' };
     const vehicleData = {
       status: VehicleStatus.MAINTENANCE,
@@ -78,7 +80,7 @@ describe('UpdateVehicleUseCase', () => {
     });
 
     expect(
-      cancelContractsForVehicleInMaintenanceUseCase.execute,
-    ).toHaveBeenCalledWith(vehicle);
+      vehicleMaintenanceProducer.sendVehicleMaintenanceJob,
+    ).toHaveBeenCalledWith(vehicleId.id);
   });
 });

@@ -1,9 +1,10 @@
-import { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
+import { VehicleMaintenanceProducer as VehicleMaintenanceAbstractProducer } from '@lib/domain/producers/vehicle-maintenance.producer';
 import { CreateVehicleUseCase } from '@lib/domain/use-cases/vehicle/create-vehicle';
 import { DeleteVehicleUseCase } from '@lib/domain/use-cases/vehicle/delete-vehicle';
 import { FindAllVehiclesUseCase } from '@lib/domain/use-cases/vehicle/find-all-vehicles';
 import { FindVehicleUseCase } from '@lib/domain/use-cases/vehicle/find-vehicle';
 import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
+import { OutMessagesModule } from '@lib/out-messages/out-messages.module';
 import { OutMongooseModule } from '@lib/out-mongoose/out-mongoose.module';
 import { VehicleMongooseRepository } from '@lib/out-mongoose/repositories/vehicle.mongoose.repository';
 import { forwardRef, Module } from '@nestjs/common';
@@ -20,7 +21,11 @@ import { VehicleController } from './vehicle.controller';
     FindVehicleUseCase,
     UpdateVehicleUseCase,
   ],
-  imports: [OutMongooseModule, forwardRef(() => ContractModule)],
+  imports: [
+    OutMongooseModule,
+    forwardRef(() => ContractModule),
+    OutMessagesModule,
+  ],
   providers: [
     {
       inject: [VehicleMongooseRepository],
@@ -51,18 +56,15 @@ import { VehicleController } from './vehicle.controller';
       },
     },
     {
-      inject: [
-        VehicleMongooseRepository,
-        CancelContractsForVehicleInMaintenanceUseCase,
-      ],
+      inject: [VehicleMongooseRepository, VehicleMaintenanceAbstractProducer],
       provide: UpdateVehicleUseCase,
       useFactory: (
         vehicleRepository: VehicleMongooseRepository,
-        cancelContractsUseCase: CancelContractsForVehicleInMaintenanceUseCase,
+        vehicleMaintenanceProducer: VehicleMaintenanceAbstractProducer,
       ) => {
         return new UpdateVehicleUseCase(
           vehicleRepository,
-          cancelContractsUseCase,
+          vehicleMaintenanceProducer,
         );
       },
     },

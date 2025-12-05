@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-
-import { OutMessagesService } from './out-messages.service';
+import { VehicleMaintenanceProducerModule } from 'src/producers/vehicle-maintenance/vehicle-maintenance.module';
 
 @Module({
-  exports: [OutMessagesService],
-  providers: [OutMessagesService],
+  exports: [VehicleMaintenanceProducerModule],
+  imports: [VehicleMaintenanceProducerModule],
 })
 export class OutMessagesModule {}

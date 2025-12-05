@@ -1,16 +1,18 @@
-import { Contract, UpdateContract } from '@lib/domain/entities/contract';
-import { ContractStatus } from '@lib/domain/entities/contract/enum';
-import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
-import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
-import type { ContractRepository } from '@lib/domain/repositories/contract.repository';
-import { CONTRACT_FIXTURE } from '@lib/domain/test/fixtures/contract/contract.fixture';
-import { VEHICLE_FIXTURE } from '@lib/domain/test/fixtures/vehicle/vehicle.fixture';
+import { Contract, UpdateContract } from 'src/entities/contract';
+import { ContractStatus } from 'src/entities/contract/enum';
+import { Vehicle } from 'src/entities/vehicle';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import type { ContractRepository } from 'src/repositories/contract.repository';
+import type { VehicleRepository } from 'src/repositories/vehicle.repository';
+import { CONTRACT_FIXTURE } from 'src/test/fixtures/contract/contract.fixture';
+import { VEHICLE_FIXTURE } from 'src/test/fixtures/vehicle/vehicle.fixture';
 
 import { CancelContractsForVehicleInMaintenanceUseCase } from '.';
 
 describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
   let cancelContractUseCase: CancelContractsForVehicleInMaintenanceUseCase;
   let contractRepository: ContractRepository;
+  let vehicleRepository: VehicleRepository;
 
   beforeEach(() => {
     contractRepository = {
@@ -22,8 +24,18 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
       update: jest.fn(),
     };
 
+    vehicleRepository = {
+      create: jest.fn(),
+      deleteById: jest.fn(),
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      findByLicensePlate: jest.fn(),
+      update: jest.fn(),
+    };
+
     cancelContractUseCase = new CancelContractsForVehicleInMaintenanceUseCase(
       contractRepository,
+      vehicleRepository,
     );
   });
 
@@ -56,8 +68,9 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
     (
       contractRepository.findByVehicleIdAndDateRange as jest.Mock
     ).mockResolvedValue(contracts);
+    (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
 
-    await cancelContractUseCase.execute(vehicle);
+    await cancelContractUseCase.execute(vehicle.id);
 
     expect(contractRepository.findByVehicleIdAndDateRange).toHaveBeenCalledWith(
       {
@@ -90,12 +103,22 @@ describe('CancelContractsForVehicleInMaintenanceUseCase', () => {
       status: VehicleStatus.AVAILABLE,
     });
 
-    await cancelContractUseCase.execute(vehicle);
+    (vehicleRepository.findById as jest.Mock).mockResolvedValue(vehicle);
+
+    await cancelContractUseCase.execute(vehicle.id);
 
     expect(
       contractRepository.findByVehicleIdAndDateRange,
     ).not.toHaveBeenCalled();
 
     expect(contractRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should throw an error if vehicle is not found', async () => {
+    (vehicleRepository.findById as jest.Mock).mockResolvedValue(null);
+
+    await expect(cancelContractUseCase.execute('1')).rejects.toThrow(
+      'Vehicle not found.',
+    );
   });
 });

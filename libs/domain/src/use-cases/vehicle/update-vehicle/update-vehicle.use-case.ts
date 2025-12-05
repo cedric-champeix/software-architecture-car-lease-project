@@ -1,12 +1,9 @@
-import { UseCase } from '@lib/domain/common/use-cases';
-import type {
-  FuelType,
-  MotorizationType,
-} from '@lib/domain/entities/vehicle/enum';
-import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
-import type { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
-import type { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
+import { UseCase } from 'src/common/use-cases';
+import type { FuelType, MotorizationType } from 'src/entities/vehicle/enum';
+import { VehicleStatus } from 'src/entities/vehicle/enum';
+import type { Vehicle } from 'src/entities/vehicle/vehicle.entity';
+import type { VehicleMaintenanceProducer } from 'src/producers/vehicle-maintenance.producer';
+import type { VehicleRepository } from 'src/repositories/vehicle.repository';
 
 export type UpdateVehicleUseCaseInput = {
   id: string;
@@ -28,7 +25,7 @@ export class UpdateVehicleUseCase extends UseCase<
 > {
   constructor(
     private readonly vehicleRepository: VehicleRepository,
-    private readonly cancelContractsForVehicleInMaintenanceUseCase: CancelContractsForVehicleInMaintenanceUseCase,
+    private readonly vehicleMaintenanceProducer: VehicleMaintenanceProducer,
   ) {
     super();
   }
@@ -51,9 +48,11 @@ export class UpdateVehicleUseCase extends UseCase<
 
     Object.assign(vehicle, input);
 
-    // TODO: move to rabbitmq worker
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
-      await this.cancelContractsForVehicleInMaintenanceUseCase.execute(vehicle);
+      // await this.cancelContractsForVehicleInMaintenanceUseCase.execute(vehicle);
+      await this.vehicleMaintenanceProducer.sendVehicleMaintenanceJob(
+        vehicle.id,
+      );
     }
 
     return this.vehicleRepository.update({

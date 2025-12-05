@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
-
-import { InMessagesService } from './in-messages.service';
+import { VehicleMaintenanceConsumerModule } from 'src/vehicle/vehicle-maintenance.module';
 
 @Module({
-  exports: [InMessagesService],
-  providers: [InMessagesService],
+  imports: [VehicleMaintenanceConsumerModule],
 })
 export class InMessagesModule {}

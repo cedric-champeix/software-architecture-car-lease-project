@@ -71,11 +71,15 @@ import { ContractController } from './contract.controller';
       },
     },
     {
-      inject: [ContractMongooseRepository],
+      inject: [ContractMongooseRepository, VehicleMongooseRepository],
       provide: CancelContractsForVehicleInMaintenanceUseCase,
-      useFactory: (contractRepository: ContractMongooseRepository) => {
+      useFactory: (
+        contractRepository: ContractMongooseRepository,
+        vehicleRepository: VehicleMongooseRepository,
+      ) => {
         return new CancelContractsForVehicleInMaintenanceUseCase(
           contractRepository,
+          vehicleRepository,
         );
       },
     },
