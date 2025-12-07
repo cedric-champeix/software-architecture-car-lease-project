@@ -27,8 +27,8 @@ export class UpdateVehicleUseCase extends UseCase<
   Vehicle
 > {
   constructor(
-    private readonly vehicleRepository: VehicleRepository,
-    private readonly vehicleMaintenanceProducer: VehicleMaintenanceProducer,
+    protected readonly vehicleRepository: VehicleRepository,
+    protected readonly vehicleMaintenanceProducer: VehicleMaintenanceProducer,
   ) {
     super();
   }
@@ -40,19 +40,9 @@ export class UpdateVehicleUseCase extends UseCase<
       throw new Error('Vehicle not found.');
     }
 
-    if (input.licensePlate && input.licensePlate !== vehicle.licensePlate) {
-      const existingVehicle = await this.vehicleRepository.findByLicensePlate({
-        licensePlate: input.licensePlate,
-      });
-      if (existingVehicle) {
-        throw new Error('Vehicle with this license plate already exists.');
-      }
-    }
-
     Object.assign(vehicle, input);
 
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
-      // await this.cancelContractsForVehicleInMaintenanceUseCase.execute(vehicle);
       await this.vehicleMaintenanceProducer.sendVehicleMaintenanceJob(
         vehicle.id,
       );

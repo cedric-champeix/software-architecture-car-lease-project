@@ -1,9 +1,9 @@
 import { VehicleMaintenanceProducer as VehicleMaintenanceAbstractProducer } from '@lib/domain/producers/vehicle-maintenance.producer';
-import { CreateVehicleUseCase } from '@lib/domain/use-cases/vehicle/create-vehicle';
+import { CreateVehicleUseCaseValidator } from '@lib/domain/use-cases/vehicle/create-vehicle';
 import { DeleteVehicleUseCase } from '@lib/domain/use-cases/vehicle/delete-vehicle';
 import { FindAllVehiclesUseCase } from '@lib/domain/use-cases/vehicle/find-all-vehicles';
 import { FindVehicleUseCase } from '@lib/domain/use-cases/vehicle/find-vehicle';
-import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
+import { UpdateVehicleUseCaseValidator } from '@lib/domain/use-cases/vehicle/update-vehicle';
 import { OutMongooseModule } from '@lib/out-mongoose/out-mongoose.module';
 import { VehicleMongooseRepository } from '@lib/out-mongoose/repositories/vehicle.mongoose.repository';
 import { forwardRef, Module } from '@nestjs/common';
@@ -14,19 +14,19 @@ import { VehicleController } from './vehicle.controller';
 @Module({
   controllers: [VehicleController],
   exports: [
-    CreateVehicleUseCase,
+    CreateVehicleUseCaseValidator,
     DeleteVehicleUseCase,
     FindAllVehiclesUseCase,
     FindVehicleUseCase,
-    UpdateVehicleUseCase,
+    UpdateVehicleUseCaseValidator,
   ],
   imports: [OutMongooseModule, forwardRef(() => ContractModule)],
   providers: [
     {
       inject: [VehicleMongooseRepository],
-      provide: CreateVehicleUseCase,
+      provide: CreateVehicleUseCaseValidator,
       useFactory: (vehicleRepository: VehicleMongooseRepository) => {
-        return new CreateVehicleUseCase(vehicleRepository);
+        return new CreateVehicleUseCaseValidator(vehicleRepository);
       },
     },
     {
@@ -52,12 +52,12 @@ import { VehicleController } from './vehicle.controller';
     },
     {
       inject: [VehicleMongooseRepository, VehicleMaintenanceAbstractProducer],
-      provide: UpdateVehicleUseCase,
+      provide: UpdateVehicleUseCaseValidator,
       useFactory: (
         vehicleRepository: VehicleMongooseRepository,
         vehicleMaintenanceProducer: VehicleMaintenanceAbstractProducer,
       ) => {
-        return new UpdateVehicleUseCase(
+        return new UpdateVehicleUseCaseValidator(
           vehicleRepository,
           vehicleMaintenanceProducer,
         );

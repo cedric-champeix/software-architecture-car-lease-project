@@ -1,9 +1,5 @@
 import { CreateVehicle } from '@lib/domain/entities/vehicle';
-import {
-  FuelType,
-  MotorizationType,
-  VehicleStatus,
-} from '@lib/domain/entities/vehicle/enum';
+import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
 import { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
 import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
 import {
@@ -45,15 +41,9 @@ describe('CreateVehicleUseCase', () => {
       ...VEHICLE_FIXTURE,
     });
 
-    (vehicleRepository.findByLicensePlate as jest.Mock).mockResolvedValue(null);
-
     (vehicleRepository.create as jest.Mock).mockResolvedValue(vehicle);
 
     const result = await createVehicleUseCase.execute(vehicleData);
-
-    expect(vehicleRepository.findByLicensePlate).toHaveBeenCalledWith({
-      licensePlate: vehicleData.licensePlate,
-    });
 
     expect(vehicleRepository.create).toHaveBeenCalledWith({
       vehicle: new CreateVehicle({
@@ -63,25 +53,5 @@ describe('CreateVehicleUseCase', () => {
     });
 
     expect(result).toEqual(vehicle);
-  });
-
-  it('should throw an error if vehicle with this license plate already exists', async () => {
-    const vehicleData = {
-      acquiredDate: new Date(),
-      color: 'blue',
-      fuelType: FuelType.PETROL,
-      licensePlate: VEHICLE_FIXTURE.licensePlate,
-      make: 'Toyota',
-      model: 'Corolla',
-      motorizationType: MotorizationType.INTERNAL_COMBUSTION,
-    };
-
-    (vehicleRepository.findByLicensePlate as jest.Mock).mockResolvedValue(
-      VEHICLE_FIXTURE,
-    );
-
-    await expect(createVehicleUseCase.execute(vehicleData)).rejects.toThrow(
-      'Vehicle with this license plate already exists.',
-    );
   });
 });
