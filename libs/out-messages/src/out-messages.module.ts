@@ -1,9 +1,19 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 
-import { OutMessagesService } from './out-messages.service';
+import { VehicleMaintenanceProducerModule } from './producers/vehicle-maintenance/vehicle-maintenance.module';
 
-@Module({
-  exports: [OutMessagesService],
-  providers: [OutMessagesService],
-})
-export class OutMessagesModule {}
+@Global()
+@Module({})
+export class OutMessagesModule {
+  static register(options: { enableProducers: boolean }) {
+    return {
+      exports: [VehicleMaintenanceProducerModule],
+      imports: [
+        VehicleMaintenanceProducerModule.register({
+          enabled: options.enableProducers,
+        }),
+      ],
+      module: OutMessagesModule,
+    };
+  }
+}

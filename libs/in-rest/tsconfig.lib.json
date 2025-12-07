@@ -6,11 +6,6 @@
     "baseUrl": ".",
     "paths": {
       "@lib/domain/*": ["../../libs/domain/src/*"],
-      "@lib/in-cron": ["../../libs/in-cron/src"],
-      "@lib/in-cron/*": ["../../libs/in-cron/src/*"],
-      "@lib/in-messages/*": ["../../libs/in-messages/src/*"],
-      "@lib/in-rest": ["../../libs/in-rest/src"],
-      "@lib/in-rest/*": ["../../libs/in-rest/src/*"],
       "@lib/out-messages/*": ["../../libs/out-messages/src/*"],
       "@lib/out-mongoose": ["../../libs/out-mongoose/src"],
       "@lib/out-mongoose/*": ["../../libs/out-mongoose/src/*"],

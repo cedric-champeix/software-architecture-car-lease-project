@@ -22,19 +22,11 @@ export class CreateVehicleUseCase extends UseCase<
   CreateVehicleUseCaseInput,
   Vehicle
 > {
-  constructor(private readonly vehicleRepository: VehicleRepository) {
+  constructor(protected readonly vehicleRepository: VehicleRepository) {
     super();
   }
 
   async execute(input: CreateVehicleUseCaseInput): Promise<Vehicle> {
-    const existingVehicle = await this.vehicleRepository.findByLicensePlate({
-      licensePlate: input.licensePlate,
-    });
-
-    if (existingVehicle) {
-      throw new Error('Vehicle with this license plate already exists.');
-    }
-
     const vehicle = new CreateVehicle({
       ...input,
       status: VehicleStatus.AVAILABLE,

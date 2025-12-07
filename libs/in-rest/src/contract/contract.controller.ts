@@ -1,4 +1,4 @@
-import { CreateContractUseCase } from '@lib/domain/use-cases/contract/create-contract';
+import { CreateContractUseCaseValidator } from '@lib/domain/use-cases/contract/create-contract';
 import { DeleteContractUseCase } from '@lib/domain/use-cases/contract/delete-contract';
 import { FindAllContractsUseCase } from '@lib/domain/use-cases/contract/find-all-contracts';
 import { FindContractUseCase } from '@lib/domain/use-cases/contract/find-contract';
@@ -17,11 +17,11 @@ import {
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 
-@Controller('contracts')
+@Controller('/api/v1/contracts')
 export class ContractController {
   constructor(
-    @Inject(CreateContractUseCase)
-    private readonly createContractUseCase: CreateContractUseCase,
+    @Inject(CreateContractUseCaseValidator)
+    private readonly createContractUseCaseValidator: CreateContractUseCaseValidator,
     @Inject(FindAllContractsUseCase)
     private readonly findAllContractsUseCase: FindAllContractsUseCase,
     @Inject(FindContractUseCase)
@@ -34,7 +34,7 @@ export class ContractController {
 
   @Post()
   create(@Body() createContractDto: CreateContractDto) {
-    return this.createContractUseCase.execute(createContractDto);
+    return this.createContractUseCaseValidator.execute(createContractDto);
   }
 
   @Get()

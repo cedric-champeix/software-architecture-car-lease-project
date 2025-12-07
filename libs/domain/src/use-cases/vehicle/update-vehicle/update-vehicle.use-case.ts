@@ -1,12 +1,12 @@
-import { UseCase } from '@lib/domain/common/use-cases';
+import { UseCase } from '../../../common/use-cases';
 import type {
   FuelType,
   MotorizationType,
-} from '@lib/domain/entities/vehicle/enum';
-import { VehicleStatus } from '@lib/domain/entities/vehicle/enum';
-import type { Vehicle } from '@lib/domain/entities/vehicle/vehicle.entity';
-import type { VehicleRepository } from '@lib/domain/repositories/vehicle.repository';
-import type { CancelContractsForVehicleInMaintenanceUseCase } from '@lib/domain/use-cases/contract/cancel-contracts-for-vehicle-in-maintenance';
+} from '../../../entities/vehicle/enum';
+import { VehicleStatus } from '../../../entities/vehicle/enum';
+import type { Vehicle } from '../../../entities/vehicle/vehicle.entity';
+import type { VehicleMaintenanceProducer } from '../../../producers/vehicle-maintenance.producer';
+import type { VehicleRepository } from '../../../repositories/vehicle.repository';
 
 export type UpdateVehicleUseCaseInput = {
   id: string;
@@ -27,8 +27,8 @@ export class UpdateVehicleUseCase extends UseCase<
   Vehicle
 > {
   constructor(
-    private readonly vehicleRepository: VehicleRepository,
-    private readonly cancelContractsForVehicleInMaintenanceUseCase: CancelContractsForVehicleInMaintenanceUseCase,
+    protected readonly vehicleRepository: VehicleRepository,
+    protected readonly vehicleMaintenanceProducer: VehicleMaintenanceProducer,
   ) {
     super();
   }
@@ -40,20 +40,12 @@ export class UpdateVehicleUseCase extends UseCase<
       throw new Error('Vehicle not found.');
     }
 
-    if (input.licensePlate && input.licensePlate !== vehicle.licensePlate) {
-      const existingVehicle = await this.vehicleRepository.findByLicensePlate({
-        licensePlate: input.licensePlate,
-      });
-      if (existingVehicle) {
-        throw new Error('Vehicle with this license plate already exists.');
-      }
-    }
-
     Object.assign(vehicle, input);
 
-    // TODO: move to rabbitmq worker
     if (vehicle.status === VehicleStatus.MAINTENANCE) {
-      await this.cancelContractsForVehicleInMaintenanceUseCase.execute(vehicle);
+      await this.vehicleMaintenanceProducer.sendVehicleMaintenanceJob(
+        vehicle.id,
+      );
     }
 
     return this.vehicleRepository.update({

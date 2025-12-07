@@ -1,8 +1,8 @@
-import { CreateVehicleUseCase } from '@lib/domain/use-cases/vehicle/create-vehicle';
+import { CreateVehicleUseCaseValidator } from '@lib/domain/use-cases/vehicle/create-vehicle';
 import { DeleteVehicleUseCase } from '@lib/domain/use-cases/vehicle/delete-vehicle';
 import { FindAllVehiclesUseCase } from '@lib/domain/use-cases/vehicle/find-all-vehicles';
 import { FindVehicleUseCase } from '@lib/domain/use-cases/vehicle/find-vehicle';
-import { UpdateVehicleUseCase } from '@lib/domain/use-cases/vehicle/update-vehicle';
+import { UpdateVehicleUseCaseValidator } from '@lib/domain/use-cases/vehicle/update-vehicle';
 import {
   Body,
   Controller,
@@ -17,24 +17,24 @@ import {
 import { CreateVehicleDto } from './dto/create-vehicle.dto';
 import { UpdateVehicleDto } from './dto/update-vehicle.dto';
 
-@Controller('vehicles')
+@Controller('/api/v1/vehicles')
 export class VehicleController {
   constructor(
-    @Inject(CreateVehicleUseCase)
-    private readonly createVehicleUseCase: CreateVehicleUseCase,
+    @Inject(CreateVehicleUseCaseValidator)
+    private readonly createVehicleUseCaseValidator: CreateVehicleUseCaseValidator,
     @Inject(FindAllVehiclesUseCase)
     private readonly findAllVehiclesUseCase: FindAllVehiclesUseCase,
     @Inject(FindVehicleUseCase)
     private readonly findVehicleUseCase: FindVehicleUseCase,
-    @Inject(UpdateVehicleUseCase)
-    private readonly updateVehicleUseCase: UpdateVehicleUseCase,
+    @Inject(UpdateVehicleUseCaseValidator)
+    private readonly updateVehicleUseCaseValidator: UpdateVehicleUseCaseValidator,
     @Inject(DeleteVehicleUseCase)
     private readonly deleteVehicleUseCase: DeleteVehicleUseCase,
   ) {}
 
   @Post()
   create(@Body() createVehicleDto: CreateVehicleDto) {
-    return this.createVehicleUseCase.execute(createVehicleDto);
+    return this.createVehicleUseCaseValidator.execute(createVehicleDto);
   }
 
   @Get()
@@ -49,7 +49,10 @@ export class VehicleController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVehicleDto: UpdateVehicleDto) {
-    return this.updateVehicleUseCase.execute({ id, input: updateVehicleDto });
+    return this.updateVehicleUseCaseValidator.execute({
+      id,
+      input: updateVehicleDto,
+    });
   }
 
   @Delete(':id')

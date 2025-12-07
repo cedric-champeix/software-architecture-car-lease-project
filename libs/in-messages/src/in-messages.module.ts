@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
 
-import { InMessagesService } from './in-messages.service';
+import { VehicleMaintenanceConsumerModule } from './vehicle/vehicle-maintenance.module';
 
-@Module({
-  exports: [InMessagesService],
-  providers: [InMessagesService],
-})
-export class InMessagesModule {}
+@Module({})
+export class InMessagesModule {
+  static register(options: { enableConsumers: boolean }) {
+    return {
+      imports: options.enableConsumers
+        ? [VehicleMaintenanceConsumerModule]
+        : [],
+      module: InMessagesModule,
+    };
+  }
+}
