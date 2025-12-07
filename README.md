@@ -149,7 +149,20 @@ pnpm test
 
 ---
 
+## Documentation
+
+For comprehensive documentation about the architecture, design patterns, and implementation details, see the **[Wiki Documentation](./docs/README.md)**.
+
+### Quick Links
+
+- 📐 [Hexagonal Architecture](./docs/01-hexagonal-architecture.md) - Learn about our architectural choices
+- 🎨 [Design Patterns](./docs/02-design-patterns.md) - Understand the patterns we use
+- ⚡ [Batch & Events](./docs/03-batch-and-events.md) - Async processing strategies
+- 🧪 [Testing Strategy](./docs/04-testing-strategy.md) - Our approach to testing
+
+---
+
 ## Author
 
-Cédric Champeix
+Cédric Champeix  
 Felix Delassus
