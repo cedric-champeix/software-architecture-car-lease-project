@@ -144,7 +144,22 @@ pnpm install
 pnpm dev
 
 # Run tests
+# Run tests
 pnpm test
+
+# Run SonarQube Analysis
+# 1. Start SonarQube server
+docker-compose -f docker-compose.sonar.yaml up -d
+
+# 2. Run tests with coverage
+pnpm test:cov
+
+# 3. Run analysis
+# Default (admin/admin)
+pnpm sonar
+
+# With specific token
+pnpm sonar -Dsonar.login=YOUR_TOKEN
 ```
 
 ---
